@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "300134624844",
+    "firebase_url": "https://mangareader-ef367.firebaseio.com",
+    "project_id": "mangareader-ef367",
+    "storage_bucket": "mangareader-ef367.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:300134624844:android:48ac28887433ffa2",
+        "android_client_info": {
+          "package_name": "com.mangareaderapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "300134624844-edcv7qdvj1dcpvehcm2fgltgjl0at640.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDm7H13zzrOCF-I3sgKfovfIGs9IwTqW6w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
