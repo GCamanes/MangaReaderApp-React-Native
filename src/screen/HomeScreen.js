@@ -3,7 +3,7 @@ import { NetInfo } from 'react-native';
 import {
     View, Text,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity, FlatList
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -16,73 +16,71 @@ let deviceHeight = Dimensions.get('window').height
 class HomeScreen extends Component {
 
     static navigationOptions = ({ navigation }) => ({
-        headerTitle: 'Home screen',
+        headerTitle: 'Manga Reader',
     });
 
     constructor(props) {
         super(props);
 
+        this.ref = firebase.firestore().collection('mangas');
+        this.unsubscribe = null;
+
         this.state = {
-            isAuthenticated: false,
-            mangas: []
+            loading: true,
+            mangas: [],
         };
     }
 
-    componentWillMount() {
-        firebase.auth().signInAnonymously()
-        .then(() => {
-            this.setState({
-                isAuthenticated: true,
-            });
-        });
+    componentDidMount() {
+        this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate)
     }
 
-    componentDidMount() {
-        firebase.auth().signInAnonymously()
-        .then(() => {
-            return firebase.firestore().collection('mangas').get()
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onCollectionUpdate = (querySnapshot) => {
+        const mangas = [];
+        querySnapshot.forEach((doc) => {
+            const { url } = doc.data();
+            console.log(doc.id);
+            mangas.push({
+                id: doc.id,
+                doc: doc, // DocumentSnapshot
+                url: url
+            });
         })
-        .then((data) => {
-            return data._docs.map((item) => (item.id))
-        })
-        .then((data) => {
-            this.setState({
-                mangas: data
-            })
+        this.setState({
+            mangas: mangas,
+            loading: false,
         });
     }
 
     onPressItem = (item) => {
         this.props.navigation.navigate('Reading', {
-            mangaName: item,
+            manga: item,
         });
     }
 
     render() {
-        if (!this.state.isAuthenticated) {
-            return null;
+        if (this.state.loading) {
+            return null; // or render a loading icon
         }
         return (
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <Text>{this.props.connectivity}</Text>
-                <TouchableOpacity onPress={() => this.onPressItem("naruto")}>
-                    <Text>Naruto</Text>
-                </TouchableOpacity>
-                {
-                    (this.state.isAuthenticated) ?
-                        <Text>Authenticated</Text>
-                    :
-                        <Text>Not authenticated</Text>
-                }
-                {
-                    this.state.mangas.map((item) => {
+            <View style={{ flex: 1 }}>
+                <FlatList
+                    data={this.state.mangas}
+                    keyExtractor={item => item.id}
+                    renderItem={({ item, index }) => {
                         return (
-                            <Text>{item}</Text>
+                            <TouchableOpacity onPress={() => this.onPressItem(item)}>
+                                <Text>{ item.id }</Text>
+                            </TouchableOpacity>
                         )
-                    })
-                }
+                    }}
+            />
             </View>
-        )
+        );
     }
 }
 

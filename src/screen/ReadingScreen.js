@@ -20,14 +20,14 @@ export class ReadingScreen extends React.Component {
         super(props);
 
         this.state = {
-            mangaName: ''
+            manga: null
         }
     }
 
     componentWillMount() {
         const { navigation } = this.props;
         this.setState({
-            mangaName: navigation.getParam('mangaName', 'none')
+            manga: navigation.getParam('manga', null)
         })
     }
 
@@ -37,43 +37,8 @@ export class ReadingScreen extends React.Component {
             <View style={styles.mainView}>
 
                 <ScrollView style={styles.scrollview} ref={(c) => {this.scroll = c}}>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
-                    <Text>{this.state.mangaName}</Text>
+                    <Text>{this.state.manga.id}</Text>
+                    <Text>{this.state.manga.url}</Text>
                 </ScrollView>
             </View>
         )
