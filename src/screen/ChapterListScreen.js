@@ -1,37 +1,45 @@
-import React, { Component } from 'react';
-import { NetInfo } from 'react-native';
+import React from 'react';
 import {
-    View, Text, StyleSheet,
-    Dimensions,
-    TouchableOpacity, FlatList,
+    StyleSheet, Text, View, FlatList, TouchableOpacity,
     ActivityIndicator
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Dimensions } from 'react-native'
 
 import firebase from 'react-native-firebase';
 
-import { MangaListItem } from '../component/MangaListItem'
+import { ChapterListItem } from '../component/ChapterListItem'
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
 
-class HomeScreen extends Component {
+export class ChapterListScreen extends React.Component {
 
-    static navigationOptions = ({ navigation }) => ({
-        headerTitle: 'Manga list',
-    });
+    static navigationOptions = {
+        title: 'Chapters list'
+    }
 
     constructor(props) {
         super(props);
 
-        this.ref = firebase.firestore().collection('mangas');
+        this.ref = null;
         this.unsubscribe = null;
 
         this.state = {
+            manga: null,
             loading: true,
-            mangas: [],
+            chapters: [],
         };
+    }
+
+    componentWillMount() {
+        const { navigation } = this.props;
+        this.setState({
+            manga: navigation.getParam('manga', null)
+        })
+        this.ref = firebase.firestore().collection('mangas').doc(navigation.getParam('manga', null).id).collection('chapters');
     }
 
     componentDidMount() {
@@ -43,25 +51,18 @@ class HomeScreen extends Component {
     }
 
     onCollectionUpdate = (querySnapshot) => {
-        const mangas = [];
+        const chapters = [];
         querySnapshot.forEach((doc) => {
             const { url } = doc.data();
-            console.log(doc.id);
-            mangas.push({
+            chapters.push({
                 id: doc.id,
                 doc: doc, // DocumentSnapshot
                 url: url
             });
         })
         this.setState({
-            mangas: mangas,
+            chapters: chapters,
             loading: false,
-        });
-    }
-
-    onPressItem = (item) => {
-        this.props.navigation.navigate('Chapters', {
-            manga: item,
         });
     }
 
@@ -77,6 +78,12 @@ class HomeScreen extends Component {
         );
     };
 
+    getChapterNumber(chapterName) {
+        const start = chapterName.length - 4;
+        const end = chapterName.length;
+        return chapterName.substring(start, end)
+    }
+
     render() {
         if (this.state.loading) {
             return (
@@ -87,14 +94,17 @@ class HomeScreen extends Component {
         }
         return (
             <View style={{ flex: 1, backgroundColor: '#F5FCFF' }}>
+                <Text>{this.state.manga.id}</Text>
                 <FlatList
-                    data={this.state.mangas}
+                    data={this.state.chapters}
                     keyExtractor={item => item.id}
+                    numColumns={4}
                     ItemSeparatorComponent={this.renderSeparator}
+                    initialNumToRender={250}
                     renderItem={({ item, index }) => {
                         return (
-                            <TouchableOpacity onPress={() => this.onPressItem(item)}>
-                                <MangaListItem manga={item}/>
+                            <TouchableOpacity >
+                                <ChapterListItem chapterNumber={this.getChapterNumber(item.id)}/>
                             </TouchableOpacity>
                         )
                     }}
@@ -116,7 +126,7 @@ const styles = StyleSheet.create({
     },
 });
 
-HomeScreen.propTypes = {
+ChapterListScreen.propTypes = {
     navigation: PropTypes.shape({
         navigate: PropTypes.func.isRequired,
     }).isRequired,
@@ -132,4 +142,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(HomeScreen);
+)(ChapterListScreen);
