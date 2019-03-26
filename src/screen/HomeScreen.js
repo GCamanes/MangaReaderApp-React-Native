@@ -8,6 +8,8 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import firebase from 'react-native-firebase';
+
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
 
@@ -19,6 +21,35 @@ class HomeScreen extends Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            isAuthenticated: false,
+            mangas: []
+        };
+    }
+
+    componentWillMount() {
+        firebase.auth().signInAnonymously()
+        .then(() => {
+            this.setState({
+                isAuthenticated: true,
+            });
+        });
+    }
+
+    componentDidMount() {
+        firebase.auth().signInAnonymously()
+        .then(() => {
+            return firebase.firestore().collection('mangas').get()
+        })
+        .then((data) => {
+            return data._docs.map((item) => (item.id))
+        })
+        .then((data) => {
+            this.setState({
+                mangas: data
+            })
+        });
     }
 
     onPressItem = (item) => {
@@ -28,12 +59,28 @@ class HomeScreen extends Component {
     }
 
     render() {
+        if (!this.state.isAuthenticated) {
+            return null;
+        }
         return (
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Text>{this.props.connectivity}</Text>
                 <TouchableOpacity onPress={() => this.onPressItem("naruto")}>
                     <Text>Naruto</Text>
                 </TouchableOpacity>
+                {
+                    (this.state.isAuthenticated) ?
+                        <Text>Authenticated</Text>
+                    :
+                        <Text>Not authenticated</Text>
+                }
+                {
+                    this.state.mangas.map((item) => {
+                        return (
+                            <Text>{item}</Text>
+                        )
+                    })
+                }
             </View>
         )
     }

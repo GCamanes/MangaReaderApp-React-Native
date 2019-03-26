@@ -8,5 +8,6 @@ target 'MangaReaderApp' do
   # Pods for MangaReaderApp
   pod 'Firebase/Core'
   pod 'Firebase/Firestore', '~> 5.15.0'
+  pod 'Firebase/Auth', '~> 5.15.0'
 
 end
