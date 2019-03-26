@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { NetInfo } from 'react-native';
 import {
-    View, Text,
+    View, Text, StyleSheet,
     Dimensions,
-    TouchableOpacity, FlatList
+    TouchableOpacity, FlatList,
+    ActivityIndicator
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import firebase from 'react-native-firebase';
+
+import { MangaListItem } from '../component/MangaListItem'
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
@@ -16,7 +19,7 @@ let deviceHeight = Dimensions.get('window').height
 class HomeScreen extends Component {
 
     static navigationOptions = ({ navigation }) => ({
-        headerTitle: 'Manga Reader',
+        headerTitle: 'Manga list',
     });
 
     constructor(props) {
@@ -62,27 +65,56 @@ class HomeScreen extends Component {
         });
     }
 
+    renderSeparator = () => {
+        return (
+            <View
+                style={{
+                    height: 1,
+                    width: deviceWidth,
+                    backgroundColor: "#CED0CE",
+                }}
+            />
+        );
+    };
+
     render() {
         if (this.state.loading) {
-            return null; // or render a loading icon
+            return (
+                <View style={styles.loadingView}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            );
         }
         return (
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, backgroundColor: '#F5FCFF' }}>
                 <FlatList
                     data={this.state.mangas}
                     keyExtractor={item => item.id}
+                    ItemSeparatorComponent={this.renderSeparator}
                     renderItem={({ item, index }) => {
                         return (
                             <TouchableOpacity onPress={() => this.onPressItem(item)}>
-                                <Text>{ item.id }</Text>
+                                <MangaListItem manga={item}/>
                             </TouchableOpacity>
                         )
                     }}
-            />
+                />
             </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    loadingView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF'
+    },
+    scrollview: {
+        width: deviceWidth,
+    },
+});
 
 HomeScreen.propTypes = {
     navigation: PropTypes.shape({
