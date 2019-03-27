@@ -46,10 +46,8 @@ class HomeScreen extends Component {
         const mangas = [];
         querySnapshot.forEach((doc) => {
             const { url } = doc.data();
-            console.log(doc.id);
             mangas.push({
                 id: doc.id,
-                doc: doc, // DocumentSnapshot
                 url: url
             });
         })

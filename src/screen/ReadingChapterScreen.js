@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    StyleSheet, Text, View, FlatList, TouchableOpacity,
+    StyleSheet, Text, View, FlatList, TouchableOpacity, Image,
     ActivityIndicator
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -10,16 +10,18 @@ import { Dimensions } from 'react-native'
 
 import firebase from 'react-native-firebase';
 
-import { ChapterListItem } from '../component/ChapterListItem'
+import { PageListItem } from '../component/PageListItem'
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
 
-export class ChapterListScreen extends React.Component {
+export class ReadingChapterScreen extends React.Component {
 
-    static navigationOptions = {
-        title: 'Chapters list'
-    }
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Chapter ' + navigation.getParam('chapter', null).number,
+        };
+    };
 
     constructor(props) {
         super(props);
@@ -29,19 +31,23 @@ export class ChapterListScreen extends React.Component {
 
         this.state = {
             manga: null,
+            chapter: null,
             loading: true,
-            chapters: [],
+            pages: [],
         };
     }
 
     componentWillMount() {
         const { navigation } = this.props;
         this.setState({
-            manga: navigation.getParam('manga', null)
+            manga: navigation.getParam('manga', null),
+            chapter: navigation.getParam('chapter', null)
         })
+
         this.ref = firebase.firestore()
             .collection('mangas').doc(navigation.getParam('manga', null).id)
-            .collection('chapters');
+            .collection('chapters').doc(navigation.getParam('chapter', null).id)
+            .collection('pages')
     }
 
     componentDidMount() {
@@ -53,17 +59,16 @@ export class ChapterListScreen extends React.Component {
     }
 
     onCollectionUpdate = (querySnapshot) => {
-        const chapters = [];
+        const pages = [];
         querySnapshot.forEach((doc) => {
             const { url } = doc.data();
-            chapters.push({
+            pages.push({
                 id: doc.id,
-                url: url,
-                number: this.getChapterNumber(doc.id)
+                url: url
             });
         })
         this.setState({
-            chapters: chapters,
+            pages: pages,
             loading: false,
         });
     }
@@ -74,20 +79,19 @@ export class ChapterListScreen extends React.Component {
         return chapterName.substring(start, end)
     }
 
-    onPressItem = (item) => {
-        this.props.navigation.navigate('Reading', {
-            manga: this.state.manga,
-            chapter: item,
-        });
+    getPageNumber(pageNumber) {
+        const start = pageNumber.length - 4;
+        const end = pageNumber.length;
+        return pageNumber.substring(start, end)
     }
 
     renderSeparator = () => {
         return (
             <View
                 style={{
-                    height: 1,
+                    height: 5,
                     width: deviceWidth,
-                    backgroundColor: "#CED0CE",
+                    backgroundColor: "gray",
                 }}
             />
         );
@@ -102,19 +106,17 @@ export class ChapterListScreen extends React.Component {
             );
         }
         return (
-            <View style={{ flex: 1, backgroundColor: '#F5FCFF' }}>
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
                 <Text>{this.state.manga.id}</Text>
                 <FlatList
-                    data={this.state.chapters}
+                    data={this.state.pages}
                     keyExtractor={item => item.id}
-                    numColumns={4}
+                    numColumns={1}
                     ItemSeparatorComponent={this.renderSeparator}
                     initialNumToRender={250}
                     renderItem={({ item, index }) => {
                         return (
-                            <TouchableOpacity onPress={() => this.onPressItem(item)}>
-                                <ChapterListItem chapterNumber={this.getChapterNumber(item.id)}/>
-                            </TouchableOpacity>
+                            <PageListItem url={item.url} />
                         )
                     }}
                 />
@@ -128,14 +130,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#F5FCFF'
-    },
-    scrollview: {
-        width: deviceWidth,
+        backgroundColor: 'gray'
     },
 });
 
-ChapterListScreen.propTypes = {
+ReadingChapterScreen.propTypes = {
     navigation: PropTypes.shape({
         navigate: PropTypes.func.isRequired,
     }).isRequired,
@@ -151,4 +150,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(ChapterListScreen);
+)(ReadingChapterScreen);
