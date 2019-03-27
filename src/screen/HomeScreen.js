@@ -25,35 +25,35 @@ class HomeScreen extends Component {
     constructor(props) {
         super(props);
 
-        this.ref = firebase.firestore().collection('mangas');
-        this.unsubscribe = null;
-
         this.state = {
+            isAuthenticated: false,
             loading: true,
-            mangas: [],
+            mangas: []
         };
     }
 
-    componentDidMount() {
-        this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate)
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
-    onCollectionUpdate = (querySnapshot) => {
-        const mangas = [];
-        querySnapshot.forEach((doc) => {
-            const { url } = doc.data();
-            mangas.push({
-                id: doc.id,
-                url: url
+    componentWillMount() {
+        firebase.auth().signInAnonymously()
+        .then(() => {
+            this.setState({
+                isAuthenticated: true,
             });
+        });
+    }
+
+    componentDidMount() {
+        firebase.auth().signInAnonymously()
+        .then(() => {
+            return firebase.firestore().collection('mangas').get()
         })
-        this.setState({
-            mangas: mangas,
-            loading: false,
+        .then((data) => {
+            return data._docs.map((item) => (item.id))
+        })
+        .then((data) => {
+            this.setState({
+                mangas: data,
+                loading: false
+            })
         });
     }
 
@@ -87,7 +87,7 @@ class HomeScreen extends Component {
             <View style={{ flex: 1, backgroundColor: '#F5FCFF' }}>
                 <FlatList
                     data={this.state.mangas}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item}
                     ItemSeparatorComponent={this.renderSeparator}
                     renderItem={({ item, index }) => {
                         return (

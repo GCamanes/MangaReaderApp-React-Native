@@ -24,10 +24,9 @@ export class ChapterListScreen extends React.Component {
     constructor(props) {
         super(props);
 
-        this.ref = null;
-        this.unsubscribe = null;
 
         this.state = {
+            isAuthenticated: false,
             manga: null,
             loading: true,
             chapters: [],
@@ -35,36 +34,35 @@ export class ChapterListScreen extends React.Component {
     }
 
     componentWillMount() {
-        const { navigation } = this.props;
-        this.setState({
-            manga: navigation.getParam('manga', null)
-        })
-        this.ref = firebase.firestore()
-            .collection('mangas').doc(navigation.getParam('manga', null).id)
-            .collection('chapters');
+        firebase.auth().signInAnonymously()
+            .then(() => {
+                this.setState({
+                    isAuthenticated: true,
+                });
+            })
+            .then(() => {
+                const { navigation } = this.props;
+                this.setState({
+                    manga: navigation.getParam('manga', 'none')
+                })
+            })
     }
 
     componentDidMount() {
-        this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate)
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
-    onCollectionUpdate = (querySnapshot) => {
-        const chapters = [];
-        querySnapshot.forEach((doc) => {
-            const { url } = doc.data();
-            chapters.push({
-                id: doc.id,
-                url: url,
-                number: this.getChapterNumber(doc.id)
-            });
+        firebase.auth().signInAnonymously()
+        .then(() => {
+            return firebase.firestore()
+                .collection('mangas').doc(this.state.manga)
+                .collection('chapters').get();
         })
-        this.setState({
-            chapters: chapters,
-            loading: false,
+        .then((data) => {
+            return data._docs.map((item) => (item.id))
+        })
+        .then((data) => {
+            this.setState({
+                chapters: data,
+                loading: false
+            })
         });
     }
 
@@ -78,6 +76,7 @@ export class ChapterListScreen extends React.Component {
         this.props.navigation.navigate('Reading', {
             manga: this.state.manga,
             chapter: item,
+            chapterNumber: this.getChapterNumber(item)
         });
     }
 
@@ -103,21 +102,21 @@ export class ChapterListScreen extends React.Component {
         }
         return (
             <View style={{ flex: 1, backgroundColor: '#F5FCFF' }}>
-                <Text>{this.state.manga.id}</Text>
+                <Text>{this.state.manga}</Text>
                 <FlatList
                     data={this.state.chapters}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item}
                     numColumns={4}
                     ItemSeparatorComponent={this.renderSeparator}
                     initialNumToRender={250}
                     renderItem={({ item, index }) => {
                         return (
                             <TouchableOpacity onPress={() => this.onPressItem(item)}>
-                                <ChapterListItem chapterNumber={this.getChapterNumber(item.id)}/>
+                                <ChapterListItem chapterNumber={this.getChapterNumber(item)} />
                             </TouchableOpacity>
                         )
                     }}
-                />
+            />
             </View>
         );
     }

@@ -11,7 +11,7 @@ export class MangaListItem extends React.Component {
     render() {
         return (
             <View style={styles.MangaItemView}>
-                <Text style={styles.mangaText}>{this.props.manga.id}</Text>
+                <Text style={styles.mangaText}>{this.props.manga}</Text>
             </View>
         );
     }

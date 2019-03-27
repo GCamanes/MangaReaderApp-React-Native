@@ -10,7 +10,8 @@ import { Dimensions } from 'react-native'
 
 import firebase from 'react-native-firebase';
 
-import { PageListItem } from '../component/PageListItem'
+import PageView from '../component/PageView'
+import { leftArrowImg, rightArrowImg, rightArrowBoldImg, leftArrowBoldImg } from '../images'
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
@@ -19,59 +20,68 @@ export class ReadingChapterScreen extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         return {
-            title: 'Chapter ' + navigation.getParam('chapter', null).number,
+            title: 'Chapter ' + navigation.getParam('chapterNumber', 'none'),
         };
     };
 
     constructor(props) {
         super(props);
 
-        this.ref = null;
-        this.unsubscribe = null;
-
         this.state = {
+            isAuthenticated: false,
             manga: null,
             chapter: null,
             loading: true,
             pages: [],
+            currentPageIndex: 0,
         };
+
+        this.getCurrentPageUrl = this.getCurrentPageUrl.bind(this);
+        this.goToNextPage = this.goToNextPage.bind(this)
+        this.goToPreviousPage = this.goToPreviousPage.bind(this)
     }
 
     componentWillMount() {
-        const { navigation } = this.props;
-        this.setState({
-            manga: navigation.getParam('manga', null),
-            chapter: navigation.getParam('chapter', null)
-        })
-
-        this.ref = firebase.firestore()
-            .collection('mangas').doc(navigation.getParam('manga', null).id)
-            .collection('chapters').doc(navigation.getParam('chapter', null).id)
-            .collection('pages')
+        firebase.auth().signInAnonymously()
+            .then(() => {
+                this.setState({
+                    isAuthenticated: true,
+                });
+            })
+            .then(() => {
+                const { navigation } = this.props;
+                this.setState({
+                    manga: navigation.getParam('manga', 'none'),
+                    chapter: navigation.getParam('chapter', 'none'),
+                })
+            })
     }
 
     componentDidMount() {
-        this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate)
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
-    onCollectionUpdate = (querySnapshot) => {
-        const pages = [];
-        querySnapshot.forEach((doc) => {
-            const { url } = doc.data();
-            pages.push({
-                id: doc.id,
-                url: url
+        firebase.auth().signInAnonymously()
+            .then(() => {
+                return firebase.firestore()
+                    .collection('mangas').doc(this.state.manga)
+                    .collection('chapters').doc(this.state.chapter)
+                    .collection('pages').get();
+            })
+            .then((data) => {
+                return data._docs.map((item, index) => {
+                    
+                    return (
+                        { id: item.id, page: index, url: item._data.url }
+                    )
+                })
+            })
+            .then((data) => {
+                console.log(data)
+                this.setState({
+                    pages: data,
+                    loading: false
+                })
             });
-        })
-        this.setState({
-            pages: pages,
-            loading: false,
-        });
     }
+
 
     getChapterNumber(chapterName) {
         const start = chapterName.length - 4;
@@ -83,6 +93,10 @@ export class ReadingChapterScreen extends React.Component {
         const start = pageNumber.length - 4;
         const end = pageNumber.length;
         return pageNumber.substring(start, end)
+    }
+
+    getCurrentPageUrl() {
+        return this.state.pages[this.state.currentPageIndex].url
     }
 
     renderSeparator = () => {
@@ -97,6 +111,22 @@ export class ReadingChapterScreen extends React.Component {
         );
     };
 
+    goToNextPage() {
+        if(this.state.currentPageIndex != (this.state.pages.length-1)) {
+            this.setState({
+                currentPageIndex: this.state.currentPageIndex+1
+            })
+        }
+    }
+
+    goToPreviousPage() {
+        if(this.state.currentPageIndex != 0) {
+            this.setState({
+                currentPageIndex: this.state.currentPageIndex-1
+            })
+        }
+    }
+
     render() {
         if (this.state.loading) {
             return (
@@ -106,20 +136,31 @@ export class ReadingChapterScreen extends React.Component {
             );
         }
         return (
-            <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <Text>{this.state.manga.id}</Text>
-                <FlatList
-                    data={this.state.pages}
-                    keyExtractor={item => item.id}
-                    numColumns={1}
-                    ItemSeparatorComponent={this.renderSeparator}
-                    initialNumToRender={250}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <PageListItem url={item.url} />
-                        )
-                    }}
-                />
+            <View style={{ flex: 1, backgroundColor: 'white', flexDirection: 'column' }}>
+                <PageView url={this.getCurrentPageUrl()}/>
+
+                <View style={{ flex: 1, backgroundColor: 'green', flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() => this.goToPreviousPage()}>
+                        <Image
+                            style={{
+                                width: deviceWidth * 0.10,
+                                height: (deviceWidth * 0.10),
+                            }}
+                            source={leftArrowImg}
+                            resizeMode="cover"
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.goToNextPage()}>
+                        <Image
+                            style={{
+                                width: deviceWidth * 0.10,
+                                height: (deviceWidth * 0.10),
+                            }}
+                            source={rightArrowBoldImg}
+                            resizeMode="cover"
+                        />
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }
