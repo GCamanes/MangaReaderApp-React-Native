@@ -3,7 +3,8 @@ import {
     View, StyleSheet,
     Dimensions,
     TouchableOpacity, FlatList,
-    ActivityIndicator, Alert
+    ActivityIndicator, Alert,
+    BackHandler
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -33,6 +34,7 @@ class HomeScreen extends Component {
     }
 
     componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
         firebase.auth().signInWithEmailAndPassword(this.props.userMail, this.props.userPassword)
             .then(() => {
                 return firebase.firestore().collection('mangas').get()
@@ -47,6 +49,14 @@ class HomeScreen extends Component {
                 })
             })
             .catch((error) => (console.log(error)));
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    }
+
+    handleBackButton() {
+        return true;
     }
 
     onPressItem = (item) => {
