@@ -3,8 +3,8 @@ import {
 } from './image.action';
 
 export const initialState = {
-    ratioLoading: false,
-    ratioLoaded: true,
+    ratioLoading: true,
+    ratioLoaded: false,
     ratio: 1,
 };
 

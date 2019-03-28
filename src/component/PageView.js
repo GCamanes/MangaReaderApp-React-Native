@@ -1,35 +1,35 @@
 import React from 'react';
-import { StyleSheet, Image, View, Dimensions } from 'react-native';
+import { StyleSheet, Image, View, Dimensions, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+
+import { loadImageRatio } from '../store/image.action';
 
 let deviceWidth = Dimensions.get('window').width
 
 export class PageView extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            ratio: 1.45,
-        }
     }
 
-    componentDidMount() {
-        console.log(this.state.ratio);
-        Image.getSize(this.props.url, (width, height) => {
-            this.setState({
-                ratio: height / width
-            })
-        });
+    componentWillMount() {
+        this.props.loadImageRatio(this.props.url);
     }
 
     render() {
+        if (this.props.ratioLoading) {
+            return (
+                <View style={styles.pageItemView}>
+                    <ActivityIndicator size="large" color="green" />
+                </View>
+            );
+        }
         return (
             <View style={styles.pageItemView}>
                 <Image
                     style={{
                         width: deviceWidth * 0.95,
-                        height: (deviceWidth * 0.95) * this.state.ratio,
+                        height: (deviceWidth * 0.95) * this.props.ratio,
                     }}
                     source={{ uri: this.props.url }}
                 />
@@ -47,20 +47,20 @@ const styles = StyleSheet.create({
 });
 
 PageView.propTypes = {
-    navigation: PropTypes.shape({
-        navigate: PropTypes.func.isRequired,
-    }).isRequired,
-
     connectivity: PropTypes.string.isRequired,
+    ratio: PropTypes.number.isRequired,
+    ratioLoading: PropTypes.bool.isRequired,
+    ratioLoading: PropTypes.bool.isRequired,
+    loadImageRatio: PropTypes.func.isRequired,
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
     ratio: state.image.ratio,
-    imageLoading: state.image.imageLoading,
-    imageLoaded: state.image.imageLoaded,
+    ratioLoading: state.image.ratioLoading,
+    ratioLoaded: state.image.ratioLoaded,
 });
 const mapDispatchToProps = dispatch => ({
-
+    loadImageRatio: (url) => dispatch(loadImageRatio(url)),
 });
 export default connect(
     mapStateToProps,

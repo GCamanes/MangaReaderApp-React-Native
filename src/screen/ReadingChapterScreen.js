@@ -111,7 +111,7 @@ export class ReadingChapterScreen extends React.Component {
         );
     };
 
-    goToNextPage() {
+    onPressNextPage() {
         if(this.state.currentPageIndex != (this.state.pages.length-1)) {
             this.setState({
                 currentPageIndex: this.state.currentPageIndex+1
@@ -119,7 +119,7 @@ export class ReadingChapterScreen extends React.Component {
         }
     }
 
-    goToPreviousPage() {
+    onPressPreviousPage() {
         if(this.state.currentPageIndex != 0) {
             this.setState({
                 currentPageIndex: this.state.currentPageIndex-1
@@ -140,7 +140,7 @@ export class ReadingChapterScreen extends React.Component {
                 <PageView url={this.getCurrentPageUrl()}/>
 
                 <View style={{ flex: 1, backgroundColor: 'green', flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => this.goToPreviousPage()}>
+                    <TouchableOpacity onPress={() => this.onPressPreviousPage()}>
                         <Image
                             style={{
                                 width: deviceWidth * 0.10,
@@ -150,7 +150,7 @@ export class ReadingChapterScreen extends React.Component {
                             resizeMode="cover"
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.goToNextPage()}>
+                    <TouchableOpacity onPress={() => this.onPressNextPage()}>
                         <Image
                             style={{
                                 width: deviceWidth * 0.10,
