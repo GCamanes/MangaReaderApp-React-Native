@@ -22,8 +22,8 @@ export function connectReducer(state = initialState, action) {
         case USER_LOGGEDIN: {
             return {
                 ...state,
-                userMail: action.userMail,
-                userPassword: action.userPassword,
+                userMail: (action.userMail) ? action.userMail : "",
+                userPassword: (action.userPassword) ? action.userPassword : "",
                 loginError: action.error,
                 loading: false,
             };

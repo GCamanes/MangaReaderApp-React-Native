@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { NetInfo } from 'react-native';
 import {
-    View, Text, StyleSheet,
+    View, StyleSheet,
     Dimensions,
     TouchableOpacity, FlatList,
-    ActivityIndicator, Button, Alert
+    ActivityIndicator, Alert
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';

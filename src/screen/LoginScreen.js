@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    Alert, Button, TextInput,
+    Alert, Button, TextInput, Dimensions,
     View, StyleSheet, ActivityIndicator
 } from 'react-native';
 
@@ -8,7 +8,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser } from '../store/connect.action';
 
-import { secondaryColor } from '../colors';
+import { primaryColor, secondaryColor } from '../colors';
+
+let deviceWidth = Dimensions.get('window').width;
 
 export class LoginScreen extends Component {
     static navigationOptions = {
@@ -22,25 +24,32 @@ export class LoginScreen extends Component {
             userMail: '',
             userPassword: '',
         };
+
+        this.onLogin = this.onLogin.bind(this);
     }
 
     onLogin() {
         const { userMail, userPassword } = this.state;
+        
         if (this.props.connectivity) {
-            this.props.loginUser(userMail, userPassword)
-                .then(() => {
-                    this.setState({
-                        userMail: '',
-                        userPassword: '',
-                    })
-                    if (this.props.loginError === undefined) {
-                        this.props.navigation.navigate('Home');
-                    } else {
-                        Alert.alert("Warning", this.props.loginError);
-                    }
-                });
+            if (userMail !== '' && userPassword !== '') {
+                this.props.loginUser(userMail, userPassword)
+                    .then(() => {
+                        this.setState({
+                            userMail: '',
+                            userPassword: '',
+                        })
+                        if (this.props.loginError === undefined) {
+                            this.props.navigation.navigate('Home');
+                        } else {
+                            Alert.alert("Warning", this.props.loginError);
+                        }
+                    });
+            } else {
+                Alert.alert('Warning', 'Please give a mail and a password.');
+            }
         } else {
-            Alert.alert('Warning', 'No internet connection');
+            Alert.alert('Warning', 'No internet connection.');
         }
     }
 
@@ -67,8 +76,8 @@ export class LoginScreen extends Component {
                     :
                         <Button
                             title={'Login'}
-                            style={styles.input}
-                            onPress={this.onLogin.bind(this)}
+                            style={styles.button}
+                            onPress={() => this.onLogin()}
                         />
                 }
 
@@ -82,16 +91,20 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#ecf0f1',
+        backgroundColor: primaryColor,
     },
     input: {
-        width: 200,
+        width: deviceWidth * 0.7,
         height: 44,
         padding: 10,
         borderWidth: 1,
-        borderColor: 'black',
+        borderColor: secondaryColor,
         marginBottom: 10,
     },
+    button: {
+        width: 200,
+        backgroundColor: secondaryColor
+    }
 });
 
 LoginScreen.propTypes = {
@@ -102,16 +115,12 @@ LoginScreen.propTypes = {
     loading: PropTypes.bool.isRequired,
     loginUser: PropTypes.func.isRequired,
     loginError: PropTypes.string,
-    userMail: PropTypes.string.isRequired,
-    userPassword: PropTypes.string.isRequired
 };
 
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
     loading: state.connect.loading,
     loginError: state.connect.loginError,
-    userMail: state.connect.userMail,
-    userPassword: state.connect.userPassword
 });
 const mapDispatchToProps = dispatch => ({
     loginUser: (userMail, userPassword) => dispatch(loginUser(userMail, userPassword)),
