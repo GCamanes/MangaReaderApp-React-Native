@@ -35,11 +35,11 @@ export class LoginScreen extends Component {
             if (userMail !== '' && userPassword !== '') {
                 this.props.loginUser(userMail, userPassword)
                     .then(() => {
-                        this.setState({
-                            userMail: '',
-                            userPassword: '',
-                        })
                         if (this.props.loginError === undefined) {
+                            this.setState({
+                                userMail: '',
+                                userPassword: '',
+                            })
                             this.props.navigation.navigate('Home');
                         } else {
                             Alert.alert("Warning", this.props.loginError);

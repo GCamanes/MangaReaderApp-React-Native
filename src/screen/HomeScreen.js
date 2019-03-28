@@ -50,9 +50,13 @@ class HomeScreen extends Component {
     }
 
     onPressItem = (item) => {
-        this.props.navigation.navigate('Chapters', {
-            manga: item,
-        });
+        if (this.props.connectivity) {
+            this.props.navigation.navigate('Chapters', {
+                manga: item,
+            });
+        } else {
+            Alert.alert('Warning', 'No internet connection.');
+        }
     }
 
     renderSeparator = () => {

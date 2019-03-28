@@ -70,11 +70,15 @@ export class ChapterListScreen extends React.Component {
     }
 
     onPressItem = (item) => {
-        this.props.navigation.navigate('Reading', {
-            manga: this.state.manga,
-            chapter: item.id,
-            chapterNumber: item.number
-        });
+        if (this.props.connectivity) {
+            this.props.navigation.navigate('Reading', {
+                manga: this.state.manga,
+                chapter: item.id,
+                chapterNumber: item.number
+            });
+        } else {
+            Alert.alert('Warning', 'No internet connection.');
+        }
     }
 
     onPressFilter() {
