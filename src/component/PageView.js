@@ -3,6 +3,8 @@ import { StyleSheet, Image, View, Dimensions, ActivityIndicator } from 'react-na
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
+
 let deviceWidth = Dimensions.get('window').width
 
 export class PageView extends React.Component {
@@ -19,7 +21,15 @@ export class PageView extends React.Component {
             );
         }
         return (
-            <View style={styles.pageItemView}>
+            <ReactNativeZoomableView
+                maxZoom={1.5}
+                minZoom={1}
+                zoomStep={0.5}
+                initialZoom={1}
+                bindToBorders={true}
+                onZoomAfter={this.logOutZoomState}
+                style={styles.pageItemView}
+            >
                 <Image
                     style={{
                         width: (deviceWidth * ((this.props.ratio > 1.5) ? ((this.props.ratio > 1.55) ? 0.85 : 0.9) : 0.95)),
@@ -27,14 +37,14 @@ export class PageView extends React.Component {
                     }}
                     source={{ uri: this.props.url }}
                 />
-            </View>
+            </ReactNativeZoomableView>
         );
     }
 }
 
 const styles = StyleSheet.create({
     pageItemView: {
-        flex: 10,
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },

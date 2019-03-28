@@ -129,8 +129,10 @@ export class ReadingChapterScreen extends React.Component {
         } else {
             return (
                 <View style={styles.readingChapterView}>
-                    <PageView url={this.getCurrentPageUrl()}/>
-
+                    <View style={{flex: 10}}>
+                        <PageView url={this.getCurrentPageUrl()}/>
+                    </View>
+                    
                     <View style={styles.bottomNavView}>
                         <View style={styles.bottomNavPartView}>
                             {
