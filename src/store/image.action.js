@@ -14,8 +14,8 @@ export function loadImageRatio(url) {
     return (dispatch) => {
         dispatch({
             type: LOAD_IMAGE_RATIO,
+            url: url,
         });
-
         new Promise(function(resolve, reject) {
             Image.getSize(url, (width, height) => {
                 resolve(height / width)

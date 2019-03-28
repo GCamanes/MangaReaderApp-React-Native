@@ -3,17 +3,11 @@ import { StyleSheet, Image, View, Dimensions, ActivityIndicator } from 'react-na
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { loadImageRatio } from '../store/image.action';
-
 let deviceWidth = Dimensions.get('window').width
 
 export class PageView extends React.Component {
     constructor(props) {
         super(props);
-    }
-
-    componentWillMount() {
-        this.props.loadImageRatio(this.props.url);
     }
 
     render() {
@@ -28,8 +22,8 @@ export class PageView extends React.Component {
             <View style={styles.pageItemView}>
                 <Image
                     style={{
-                        width: deviceWidth * 0.95,
-                        height: (deviceWidth * 0.95) * this.props.ratio,
+                        width: (deviceWidth * ((this.props.ratio > 1.5) ? ((this.props.ratio > 1.55) ? 0.85 : 0.9) : 0.95)),
+                        height: (deviceWidth * ((this.props.ratio > 1.5) ? ((this.props.ratio > 1.55) ? 0.85 : 0.9) : 0.95)) * this.props.ratio,
                     }}
                     source={{ uri: this.props.url }}
                 />
@@ -48,19 +42,20 @@ const styles = StyleSheet.create({
 
 PageView.propTypes = {
     connectivity: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
     ratio: PropTypes.number.isRequired,
     ratioLoading: PropTypes.bool.isRequired,
     ratioLoading: PropTypes.bool.isRequired,
-    loadImageRatio: PropTypes.func.isRequired,
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
+    url: state.image.url,
     ratio: state.image.ratio,
     ratioLoading: state.image.ratioLoading,
     ratioLoaded: state.image.ratioLoaded,
 });
 const mapDispatchToProps = dispatch => ({
-    loadImageRatio: (url) => dispatch(loadImageRatio(url)),
+
 });
 export default connect(
     mapStateToProps,

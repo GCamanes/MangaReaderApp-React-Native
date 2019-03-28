@@ -1,14 +1,16 @@
 import React from 'react';
 import {
-    StyleSheet, Text, View, FlatList, TouchableOpacity, Image,
+    StyleSheet, Text, View, TouchableOpacity, Image,
     ActivityIndicator
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native'
 
 import firebase from 'react-native-firebase';
+
+import { loadImageRatio } from '../store/image.action';
+import { mainBackgroundColor, bottomBarColor } from '../colors'
 
 import PageView from '../component/PageView'
 import { leftArrowImg, rightArrowImg, rightArrowBoldImg, leftArrowBoldImg } from '../images'
@@ -37,8 +39,8 @@ export class ReadingChapterScreen extends React.Component {
         };
 
         this.getCurrentPageUrl = this.getCurrentPageUrl.bind(this);
-        this.goToNextPage = this.goToNextPage.bind(this)
-        this.goToPreviousPage = this.goToPreviousPage.bind(this)
+        this.onPressNextPage = this.onPressNextPage.bind(this)
+        this.onPressPreviousPage = this.onPressPreviousPage.bind(this)
     }
 
     componentWillMount() {
@@ -79,9 +81,9 @@ export class ReadingChapterScreen extends React.Component {
                     pages: data,
                     loading: false
                 })
-            });
+            })
+            .then(() => this.props.loadImageRatio(this.state.pages[0].url));
     }
-
 
     getChapterNumber(chapterName) {
         const start = chapterName.length - 4;
@@ -99,23 +101,12 @@ export class ReadingChapterScreen extends React.Component {
         return this.state.pages[this.state.currentPageIndex].url
     }
 
-    renderSeparator = () => {
-        return (
-            <View
-                style={{
-                    height: 5,
-                    width: deviceWidth,
-                    backgroundColor: "gray",
-                }}
-            />
-        );
-    };
-
     onPressNextPage() {
         if(this.state.currentPageIndex != (this.state.pages.length-1)) {
             this.setState({
                 currentPageIndex: this.state.currentPageIndex+1
             })
+            this.props.loadImageRatio(this.state.pages[this.state.currentPageIndex+1].url)
         }
     }
 
@@ -124,6 +115,7 @@ export class ReadingChapterScreen extends React.Component {
             this.setState({
                 currentPageIndex: this.state.currentPageIndex-1
             })
+            this.props.loadImageRatio(this.state.pages[this.state.currentPageIndex-1].url)
         }
     }
 
@@ -134,35 +126,59 @@ export class ReadingChapterScreen extends React.Component {
                     <ActivityIndicator size="large" color="#0000ff" />
                 </View>
             );
-        }
-        return (
-            <View style={{ flex: 1, backgroundColor: 'white', flexDirection: 'column' }}>
-                <PageView url={this.getCurrentPageUrl()}/>
+        } else {
+            return (
+                <View style={{ flex: 1, backgroundColor: mainBackgroundColor, flexDirection: 'column' }}>
+                    <PageView url={this.getCurrentPageUrl()}/>
 
-                <View style={{ flex: 1, backgroundColor: 'green', flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => this.onPressPreviousPage()}>
-                        <Image
-                            style={{
-                                width: deviceWidth * 0.10,
-                                height: (deviceWidth * 0.10),
-                            }}
-                            source={leftArrowImg}
-                            resizeMode="cover"
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.onPressNextPage()}>
-                        <Image
-                            style={{
-                                width: deviceWidth * 0.10,
-                                height: (deviceWidth * 0.10),
-                            }}
-                            source={rightArrowBoldImg}
-                            resizeMode="cover"
-                        />
-                    </TouchableOpacity>
+                    <View style={{ flex: 1, backgroundColor: bottomBarColor, flexDirection: 'row' }}>
+                        <View style={{ flex: 1 }}>
+                            {
+                                (this.state.currentPageIndex !== 0) &&
+                                    <TouchableOpacity
+                                        style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
+                                        onPress={() => this.onPressPreviousPage()} >
+                                        <Image
+                                            style={{
+                                                width: deviceWidth * 0.10,
+                                                height: (deviceWidth * 0.10),
+                                            }}
+                                            source={leftArrowImg}
+                                            resizeMode="cover"
+                                        />
+                                        <Text>Prev</Text>
+                                    </TouchableOpacity>
+                            }
+
+                        </View>
+
+
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                            <Text>{this.state.currentPageIndex+1}/{this.state.pages.length}</Text>
+                        </View>
+
+                        <View style={{ flex: 1 }}>
+                            {
+                                (this.state.currentPageIndex !== (this.state.pages.length-1)) &&
+                                    <TouchableOpacity
+                                        style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
+                                        onPress={() => this.onPressNextPage()} >
+                                        <Text>Next</Text>
+                                        <Image
+                                            style={{
+                                                width: deviceWidth * 0.10,
+                                                height: (deviceWidth * 0.10),
+                                            }}
+                                            source={rightArrowBoldImg}
+                                            resizeMode="cover"
+                                        />
+                                    </TouchableOpacity>
+                            }
+                        </View>
+                    </View>
                 </View>
-            </View>
-        );
+            );
+        }
     }
 }
 
@@ -186,7 +202,7 @@ const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
 });
 const mapDispatchToProps = dispatch => ({
-
+    loadImageRatio: (url) => dispatch(loadImageRatio(url)),
 });
 export default connect(
     mapStateToProps,

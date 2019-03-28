@@ -5,6 +5,7 @@ import {
 export const initialState = {
     ratioLoading: true,
     ratioLoaded: false,
+    url: '',
     ratio: 1,
 };
 
@@ -21,6 +22,7 @@ export function imageReducer(state = initialState, action) {
         case LOAD_IMAGE_RATIO: {
             return {
                 ...state,
+                url: action.url,
                 ratioLoading: true,
                 ratioLoaded: false,
             };
