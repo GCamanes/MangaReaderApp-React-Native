@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
-    Alert, Button, TextInput, Dimensions,
-    View, StyleSheet, ActivityIndicator
+    Alert, TouchableOpacity, TextInput, Dimensions,
+    View, StyleSheet, ActivityIndicator, Text
 } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -56,6 +56,8 @@ export class LoginScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
+                <Text style={styles.welcomeText}>Welcome to</Text>
+                <Text style={{...styles.welcomeText, marginBottom: 20}}>Manga Reader App !</Text>
                 <TextInput
                     value={this.state.userMail}
                     onChangeText={(userMail) => this.setState({ userMail })}
@@ -72,13 +74,18 @@ export class LoginScreen extends Component {
                 />
                 {
                     (this.props.loading) ?
-                        <ActivityIndicator size="large" color={secondaryColor} />
-                    :
-                        <Button
-                            title={'Login'}
-                            style={styles.button}
-                            onPress={() => this.onLogin()}
+                        <ActivityIndicator 
+                            size="large"
+                            color={secondaryColor}
+                            style={{marginTop: 15}}
                         />
+                    :
+                        <TouchableOpacity
+                            style={styles.touchableLogin}
+                            onPress={() => this.onLogin()}
+                        >
+                            <Text style={styles.loginText}>Login</Text>
+                        </TouchableOpacity>
                 }
 
             </View>
@@ -93,18 +100,35 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: primaryColor,
     },
+    welcomeText: {
+        color: secondaryColor,
+        fontSize: 25,
+        fontWeight: 'bold',
+    },
     input: {
         width: deviceWidth * 0.7,
         height: 44,
         padding: 10,
         borderWidth: 1,
+        borderRadius: 5,
         borderColor: secondaryColor,
         marginBottom: 10,
     },
-    button: {
-        width: 200,
-        backgroundColor: secondaryColor
+    touchableLogin: {
+        width: deviceWidth * 0.7,
+        height: 40,
+        borderRadius: 20,
+        marginTop: 15,
+        backgroundColor: secondaryColor,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    loginText: {
+        color: primaryColor,
+        fontSize: 20,
+        fontWeight: 'bold'
     }
+
 });
 
 LoginScreen.propTypes = {
