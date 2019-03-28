@@ -10,13 +10,13 @@ import { Dimensions } from 'react-native'
 import firebase from 'react-native-firebase';
 
 import { loadImageRatio } from '../store/image.action';
-import { mainBackgroundColor, bottomBarColor } from '../colors'
+import { primaryColor, secondaryColor } from '../colors';
 
-import PageView from '../component/PageView'
-import { leftArrowImg, rightArrowImg, rightArrowBoldImg, leftArrowBoldImg } from '../images'
+import PageView from '../component/PageView';
+import { leftArrowImg, rightArrowImg } from '../images';
 
-let deviceWidth = Dimensions.get('window').width
-let deviceHeight = Dimensions.get('window').height
+let deviceWidth = Dimensions.get('window').width;
+let deviceHeight = Dimensions.get('window').height;
 
 export class ReadingChapterScreen extends React.Component {
 
@@ -123,53 +123,45 @@ export class ReadingChapterScreen extends React.Component {
         if (this.state.loading) {
             return (
                 <View style={styles.loadingView}>
-                    <ActivityIndicator size="large" color="#0000ff" />
+                    <ActivityIndicator size="large" color={secondaryColor} />
                 </View>
             );
         } else {
             return (
-                <View style={{ flex: 1, backgroundColor: mainBackgroundColor, flexDirection: 'column' }}>
+                <View style={styles.readingChapterView}>
                     <PageView url={this.getCurrentPageUrl()}/>
 
-                    <View style={{ flex: 1, backgroundColor: bottomBarColor, flexDirection: 'row' }}>
-                        <View style={{ flex: 1 }}>
+                    <View style={styles.bottomNavView}>
+                        <View style={styles.bottomNavPartView}>
                             {
                                 (this.state.currentPageIndex !== 0) &&
                                     <TouchableOpacity
-                                        style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
+                                        style={styles.bottomNavTouchableView}
                                         onPress={() => this.onPressPreviousPage()} >
                                         <Image
-                                            style={{
-                                                width: deviceWidth * 0.10,
-                                                height: (deviceWidth * 0.10),
-                                            }}
+                                            style={styles.bottomNavTouchableImg}
                                             source={leftArrowImg}
                                             resizeMode="cover"
                                         />
-                                        <Text>Prev</Text>
+                                        <Text style={styles.bottomNavTouchableText}>Prev</Text>
                                     </TouchableOpacity>
                             }
-
                         </View>
 
-
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                            <Text>{this.state.currentPageIndex+1}/{this.state.pages.length}</Text>
+                        <View style={styles.bottomNavPartView}>
+                            <Text style={styles.bottomNavTouchableText}>{this.state.currentPageIndex+1}/{this.state.pages.length}</Text>
                         </View>
 
-                        <View style={{ flex: 1 }}>
+                        <View style={styles.bottomNavPartView}>
                             {
                                 (this.state.currentPageIndex !== (this.state.pages.length-1)) &&
                                     <TouchableOpacity
-                                        style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
+                                        style={styles.bottomNavTouchableView}
                                         onPress={() => this.onPressNextPage()} >
-                                        <Text>Next</Text>
+                                        <Text style={styles.bottomNavTouchableText}>Next</Text>
                                         <Image
-                                            style={{
-                                                width: deviceWidth * 0.10,
-                                                height: (deviceWidth * 0.10),
-                                            }}
-                                            source={rightArrowBoldImg}
+                                            style={styles.bottomNavTouchableImg}
+                                            source={rightArrowImg}
                                             resizeMode="cover"
                                         />
                                     </TouchableOpacity>
@@ -189,6 +181,34 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'gray'
     },
+    readingChapterView: {
+        flex: 1,
+        backgroundColor: primaryColor,
+        flexDirection: 'column'
+    },
+    bottomNavView: {
+        flex: 1,
+        backgroundColor: secondaryColor,
+        flexDirection: 'row'
+    },
+    bottomNavPartView: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    bottomNavTouchableView: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',justifyContent: 'center'
+    },
+    bottomNavTouchableImg: {
+        width: deviceWidth * 0.10,
+        height: deviceWidth * 0.10,
+    },
+    bottomNavTouchableText: {
+        color: 'black',
+        fontSize: 18,
+    }
 });
 
 ReadingChapterScreen.propTypes = {

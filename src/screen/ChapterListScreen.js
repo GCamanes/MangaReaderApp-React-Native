@@ -1,19 +1,20 @@
 import React from 'react';
 import {
     StyleSheet, Text, View, FlatList, TouchableOpacity,
-    ActivityIndicator
+    ActivityIndicator, Image
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native'
 
 import firebase from 'react-native-firebase';
 
-import { ChapterListItem } from '../component/ChapterListItem'
+import { ChapterListItem } from '../component/ChapterListItem';
 
-let deviceWidth = Dimensions.get('window').width
-let deviceHeight = Dimensions.get('window').height
+import { primaryColor, secondaryColor } from '../colors';
+import { leftArrowImg } from "../images";
+
+let deviceWidth = Dimensions.get('window').width;
 
 export class ChapterListScreen extends React.Component {
 
@@ -50,20 +51,20 @@ export class ChapterListScreen extends React.Component {
 
     componentDidMount() {
         firebase.auth().signInAnonymously()
-        .then(() => {
-            return firebase.firestore()
-                .collection('mangas').doc(this.state.manga)
-                .collection('chapters').get();
-        })
-        .then((data) => {
-            return data._docs.map((item) => (item.id))
-        })
-        .then((data) => {
-            this.setState({
-                chapters: data,
-                loading: false
+            .then(() => {
+                return firebase.firestore()
+                    .collection('mangas').doc(this.state.manga)
+                    .collection('chapters').get();
             })
-        });
+            .then((data) => {
+                return data._docs.map((item) => (item.id))
+            })
+            .then((data) => {
+                this.setState({
+                    chapters: data,
+                    loading: false
+                })
+            });
     }
 
     getChapterNumber(chapterName) {
@@ -80,35 +81,30 @@ export class ChapterListScreen extends React.Component {
         });
     }
 
-    renderSeparator = () => {
-        return (
-            <View
-                style={{
-                    height: 1,
-                    width: deviceWidth,
-                    backgroundColor: "#CED0CE",
-                }}
-            />
-        );
-    };
-
     render() {
         if (this.state.loading) {
             return (
                 <View style={styles.loadingView}>
-                    <ActivityIndicator size="large" color="#0000ff" />
+                    <ActivityIndicator size="large" color={secondaryColor} />
                 </View>
             );
         }
         return (
-            <View style={{ flex: 1, backgroundColor: '#F5FCFF' }}>
-                <Text>{this.state.manga}</Text>
+            <View style={styles.chapterListView}>
+                <View style={styles.chapterListTitleView}>
+                    <Text style={styles.chapterListTitle}>{this.state.manga}</Text>
+                    <TouchableOpacity>
+                        <Image
+                            style={styles.chapterListTitleImage}
+                            source={leftArrowImg}
+                        />
+                    </TouchableOpacity>
+                </View>
                 <FlatList
                     data={this.state.chapters}
                     keyExtractor={item => item}
                     numColumns={4}
-                    ItemSeparatorComponent={this.renderSeparator}
-                    initialNumToRender={250}
+                    initialNumToRender={30}
                     renderItem={({ item, index }) => {
                         return (
                             <TouchableOpacity onPress={() => this.onPressItem(item)}>
@@ -116,7 +112,7 @@ export class ChapterListScreen extends React.Component {
                             </TouchableOpacity>
                         )
                     }}
-            />
+                />
             </View>
         );
     }
@@ -129,9 +125,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#F5FCFF'
     },
-    scrollview: {
-        width: deviceWidth,
+    chapterListView: {
+        flex: 1,
+        backgroundColor: primaryColor
     },
+    chapterListTitleView: {
+        height: deviceWidth * 0.15,
+        width: deviceWidth,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row'
+    },
+    chapterListTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'black'
+    },
+    chapterListTitleImage: {
+        width: deviceWidth * 0.1,
+        height: deviceWidth * 0.1,
+    }
 });
 
 ChapterListScreen.propTypes = {

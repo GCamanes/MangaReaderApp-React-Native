@@ -1,2 +1,2 @@
-export const mainBackgroundColor = '#F5FCFF';
-export const bottomBarColor = '#38A8D5';
+export const primaryColor = '#F5FCFF';
+export const secondaryColor = '#38A8D5';

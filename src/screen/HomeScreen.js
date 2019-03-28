@@ -11,10 +11,11 @@ import { connect } from 'react-redux';
 
 import firebase from 'react-native-firebase';
 
-import { MangaListItem } from '../component/MangaListItem'
+import { MangaListItem } from '../component/MangaListItem';
+import { primaryColor, secondaryColor } from '../colors';
 
-let deviceWidth = Dimensions.get('window').width
-let deviceHeight = Dimensions.get('window').height
+let deviceWidth = Dimensions.get('window').width;
+let deviceHeight = Dimensions.get('window').height;
 
 class HomeScreen extends Component {
 
@@ -69,7 +70,7 @@ class HomeScreen extends Component {
                 style={{
                     height: 1,
                     width: deviceWidth,
-                    backgroundColor: "#CED0CE",
+                    backgroundColor: secondaryColor,
                 }}
             />
         );
@@ -79,12 +80,12 @@ class HomeScreen extends Component {
         if (this.state.loading) {
             return (
                 <View style={styles.loadingView}>
-                    <ActivityIndicator size="large" color="#0000ff" />
+                    <ActivityIndicator size="large" color={secondaryColor} />
                 </View>
             );
         }
         return (
-            <View style={{ flex: 1, backgroundColor: '#F5FCFF' }}>
+            <View style={{ flex: 1, backgroundColor: primaryColor }}>
                 <FlatList
                     data={this.state.mangas}
                     keyExtractor={item => item}
