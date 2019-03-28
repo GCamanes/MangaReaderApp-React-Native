@@ -26,7 +26,6 @@ export class ChapterListScreen extends React.Component {
         super(props);
 
         this.state = {
-            isAuthenticated: false,
             manga: null,
             loading: true,
             chapters: [],
@@ -37,22 +36,14 @@ export class ChapterListScreen extends React.Component {
     }
 
     componentWillMount() {
-        firebase.auth().signInAnonymously()
-            .then(() => {
-                this.setState({
-                    isAuthenticated: true,
-                });
-            })
-            .then(() => {
-                const { navigation } = this.props;
-                this.setState({
-                    manga: navigation.getParam('manga', 'none')
-                })
-            })
+        const { navigation } = this.props;
+        this.setState({
+            manga: navigation.getParam('manga', 'none')
+        })
     }
 
     componentDidMount() {
-        firebase.auth().signInAnonymously()
+        firebase.auth().signInWithEmailAndPassword(this.props.userMail, this.props.userPassword)
             .then(() => {
                 return firebase.firestore()
                     .collection('mangas').doc(this.state.manga)
@@ -68,7 +59,8 @@ export class ChapterListScreen extends React.Component {
                     chapters: data.sort((a,b) => b.number - a.number),
                     loading: false
                 })
-            });
+            })
+            .catch((error) => (console.log(error)));
     }
 
     getChapterNumber(chapterName) {
@@ -168,9 +160,13 @@ ChapterListScreen.propTypes = {
     }).isRequired,
 
     connectivity: PropTypes.string.isRequired,
+    userMail: PropTypes.string.isRequired,
+    userPassword: PropTypes.string.isRequired
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
+    userMail: state.connect.userMail,
+    userPassword: state.connect.userPassword
 });
 const mapDispatchToProps = dispatch => ({
 

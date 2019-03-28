@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Dimensions } from 'react-native'
+import { Dimensions } from 'react-native';
 
 import firebase from 'react-native-firebase';
 
@@ -16,7 +16,6 @@ import PageView from '../component/PageView';
 import { leftArrowImg, rightArrowImg } from '../images';
 
 let deviceWidth = Dimensions.get('window').width;
-let deviceHeight = Dimensions.get('window').height;
 
 export class ReadingChapterScreen extends React.Component {
 
@@ -30,7 +29,6 @@ export class ReadingChapterScreen extends React.Component {
         super(props);
 
         this.state = {
-            isAuthenticated: false,
             manga: null,
             chapter: null,
             loading: true,
@@ -44,23 +42,15 @@ export class ReadingChapterScreen extends React.Component {
     }
 
     componentWillMount() {
-        firebase.auth().signInAnonymously()
-            .then(() => {
-                this.setState({
-                    isAuthenticated: true,
-                });
-            })
-            .then(() => {
-                const { navigation } = this.props;
-                this.setState({
-                    manga: navigation.getParam('manga', 'none'),
-                    chapter: navigation.getParam('chapter', 'none'),
-                })
-            })
+        const { navigation } = this.props;
+        this.setState({
+            manga: navigation.getParam('manga', 'none'),
+            chapter: navigation.getParam('chapter', 'none'),
+        })
     }
 
     componentDidMount() {
-        firebase.auth().signInAnonymously()
+        firebase.auth().signInWithEmailAndPassword(this.props.userMail, this.props.userPassword)
             .then(() => {
                 return firebase.firestore()
                     .collection('mangas').doc(this.state.manga)
@@ -82,7 +72,8 @@ export class ReadingChapterScreen extends React.Component {
                     loading: false
                 })
             })
-            .then(() => this.props.loadImageRatio(this.state.pages[0].url));
+            .then(() => this.props.loadImageRatio(this.state.pages[0].url))
+            .catch((error) => (console.log(error)));
     }
 
     getChapterNumber(chapterName) {
@@ -130,7 +121,7 @@ export class ReadingChapterScreen extends React.Component {
             return (
                 <View style={styles.readingChapterView}>
                     <View style={{flex: 10}}>
-                        <PageView url={this.getCurrentPageUrl()}/>
+                        <PageView/>
                     </View>
                     
                     <View style={styles.bottomNavView}>
@@ -151,7 +142,9 @@ export class ReadingChapterScreen extends React.Component {
                         </View>
 
                         <View style={styles.bottomNavPartView}>
-                            <Text style={styles.bottomNavTouchableText}>{this.state.currentPageIndex+1}/{this.state.pages.length}</Text>
+                            <Text style={styles.bottomNavTouchableText}>
+                                {this.state.currentPageIndex+1}/{this.state.pages.length}
+                            </Text>
                         </View>
 
                         <View style={styles.bottomNavPartView}>
@@ -181,7 +174,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'gray'
+        backgroundColor: primaryColor
     },
     readingChapterView: {
         flex: 1,
@@ -219,9 +212,14 @@ ReadingChapterScreen.propTypes = {
     }).isRequired,
 
     connectivity: PropTypes.string.isRequired,
+    userMail: PropTypes.string.isRequired,
+    userPassword: PropTypes.string.isRequired,
+    loadImageRatio: PropTypes.func.isRequired,
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
+    userMail: state.connect.userMail,
+    userPassword: state.connect.userPassword
 });
 const mapDispatchToProps = dispatch => ({
     loadImageRatio: (url) => dispatch(loadImageRatio(url)),
