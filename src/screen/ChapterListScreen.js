@@ -12,7 +12,7 @@ import firebase from 'react-native-firebase';
 import { ChapterListItem } from '../component/ChapterListItem';
 
 import { primaryColor, secondaryColor } from '../colors';
-import { leftArrowImg } from "../images";
+import { filterListDownImg, filterListUpImg } from "../images";
 
 let deviceWidth = Dimensions.get('window').width;
 
@@ -25,13 +25,15 @@ export class ChapterListScreen extends React.Component {
     constructor(props) {
         super(props);
 
-
         this.state = {
             isAuthenticated: false,
             manga: null,
             loading: true,
             chapters: [],
+            filter: 'down'
         };
+
+        this.onPressFilter = this.onPressFilter.bind(this);
     }
 
     componentWillMount() {
@@ -57,11 +59,13 @@ export class ChapterListScreen extends React.Component {
                     .collection('chapters').get();
             })
             .then((data) => {
-                return data._docs.map((item) => (item.id))
+                return data._docs.map((item, index) => {
+                    return ({id: item.id, number: index+1})
+                })
             })
             .then((data) => {
                 this.setState({
-                    chapters: data,
+                    chapters: data.sort((a,b) => b.number - a.number),
                     loading: false
                 })
             });
@@ -70,14 +74,23 @@ export class ChapterListScreen extends React.Component {
     getChapterNumber(chapterName) {
         const start = chapterName.length - 4;
         const end = chapterName.length;
-        return chapterName.substring(start, end)
+        return chapterName.substring(start, end);
     }
 
     onPressItem = (item) => {
         this.props.navigation.navigate('Reading', {
             manga: this.state.manga,
-            chapter: item,
-            chapterNumber: this.getChapterNumber(item)
+            chapter: item.id,
+            chapterNumber: item.number
+        });
+    }
+
+    onPressFilter() {
+        this.setState({
+            filter: (this.state.filter === 'down') ? 'up' : 'down',
+            chapters: (this.state.filter === 'down') ?
+                this.state.chapters.sort((a,b) => a.number - b.number) 
+                : this.state.chapters.sort((a,b) => b.number - a.number) 
         });
     }
 
@@ -93,22 +106,23 @@ export class ChapterListScreen extends React.Component {
             <View style={styles.chapterListView}>
                 <View style={styles.chapterListTitleView}>
                     <Text style={styles.chapterListTitle}>{this.state.manga}</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.onPressFilter()}>
                         <Image
                             style={styles.chapterListTitleImage}
-                            source={leftArrowImg}
+                            source={(this.state.filter === 'down') ? filterListDownImg : filterListUpImg}
                         />
                     </TouchableOpacity>
                 </View>
                 <FlatList
                     data={this.state.chapters}
-                    keyExtractor={item => item}
+                    extraData={this.state}
+                    keyExtractor={item => item.id}
                     numColumns={4}
                     initialNumToRender={30}
-                    renderItem={({ item, index }) => {
+                    renderItem={({ item }) => {
                         return (
                             <TouchableOpacity onPress={() => this.onPressItem(item)}>
-                                <ChapterListItem chapterNumber={this.getChapterNumber(item)} />
+                                <ChapterListItem chapterNumber={this.getChapterNumber(item.id)} />
                             </TouchableOpacity>
                         )
                     }}
@@ -144,6 +158,7 @@ const styles = StyleSheet.create({
     chapterListTitleImage: {
         width: deviceWidth * 0.1,
         height: deviceWidth * 0.1,
+        marginStart: 10
     }
 });
 
