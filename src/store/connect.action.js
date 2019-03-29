@@ -21,10 +21,11 @@ export function userLoggedIn(data) {
     };
 }
 
-export function loginUser(userMail, userPassword) {
+export function loginUser(userMail, userPassword, userRemember) {
     return (dispatch) => {
         dispatch({ type: LOGIN_USER });
         return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
+            .then(() => console.log(userRemember))
             .then(() => dispatch(userLoggedIn({ userMail: userMail, userPassword: userPassword })))
             .catch((error) => dispatch(userLoggedIn({ error: "Wrong mail or password" })))
     };

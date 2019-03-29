@@ -22,7 +22,7 @@ export class PageView extends React.Component {
         }
         return (
             <ReactNativeZoomableView
-                maxZoom={1.5}
+                maxZoom={2.0}
                 minZoom={1}
                 zoomStep={0.5}
                 initialZoom={1}

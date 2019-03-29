@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 
-import { secondaryColor } from '../colors';
+import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 
 let deviceWidth = Dimensions.get('window').width;
 
@@ -27,6 +27,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: deviceWidth * 0.24,
         height: deviceWidth * 0.15,
+        borderRadius: 8,
+        borderWidth: 2,
+        borderColor: tertiaryColor,
         margin: 1
     },
     chapterItemText: {

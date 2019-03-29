@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import {
     Alert, TouchableOpacity, TextInput, Dimensions,
-    View, StyleSheet, ActivityIndicator, Text
+    View, StyleSheet, ActivityIndicator, Text, Switch
 } from 'react-native';
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser } from '../store/connect.action';
 
-import { primaryColor, secondaryColor } from '../colors';
+import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 
 let deviceWidth = Dimensions.get('window').width;
 
@@ -22,19 +22,25 @@ export class LoginScreen extends Component {
         super(props);
 
         this.state = {
-            userMail: '',
-            userPassword: '',
+            userMail: 'guillaume.camanes@gmail.com',
+            userPassword: 'MRAbalaise',
+            userRemember: false
         };
 
+        this.onToggleSwitchRememberMe = this.onToggleSwitchRememberMe.bind(this);
         this.onLogin = this.onLogin.bind(this);
     }
 
+    onToggleSwitchRememberMe = (value) => {
+        this.setState({ userRemember: value })
+    }
+
     onLogin() {
-        const { userMail, userPassword } = this.state;
-        
+        const { userMail, userPassword, userRemember } = this.state;
+
         if (this.props.connectivity) {
             if (userMail !== '' && userPassword !== '') {
-                this.props.loginUser(userMail, userPassword)
+                this.props.loginUser(userMail, userPassword, userRemember)
                     .then(() => {
                         if (this.props.loginError === undefined) {
                             this.setState({
@@ -58,7 +64,7 @@ export class LoginScreen extends Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.welcomeText}>Welcome to</Text>
-                <Text style={{...styles.welcomeText, marginBottom: 20}}>Manga Reader App !</Text>
+                <Text style={{ ...styles.welcomeText, marginBottom: 20 }}>Manga Reader App !</Text>
                 <TextInput
                     value={this.state.userMail}
                     onChangeText={(userMail) => this.setState({ userMail })}
@@ -73,14 +79,21 @@ export class LoginScreen extends Component {
                     secureTextEntry={true}
                     style={styles.input}
                 />
+                <View style={styles.rememberUserView}>
+                    <Text style={styles.rememberUserText}>Remember me ?</Text>
+                    <Switch
+                        onValueChange={this.onToggleSwitchRememberMe}
+                        value={this.state.userRemember}
+                    />
+                </View>
                 {
                     (this.props.loading) ?
-                        <ActivityIndicator 
+                        <ActivityIndicator
                             size="large"
                             color={secondaryColor}
-                            style={{marginTop: 15}}
+                            style={{ marginTop: 15 }}
                         />
-                    :
+                        :
                         <TouchableOpacity
                             style={styles.touchableLogin}
                             onPress={() => this.onLogin()}
@@ -115,6 +128,18 @@ const styles = StyleSheet.create({
         borderColor: secondaryColor,
         marginBottom: 10,
     },
+    rememberUserView: {
+        width: deviceWidth * 0.7,
+        height: 30,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    rememberUserText: {
+        fontSize: 14,
+        color: tertiaryColor,
+        marginEnd: 10
+    },
     touchableLogin: {
         width: deviceWidth * 0.7,
         height: 40,
@@ -148,7 +173,7 @@ const mapStateToProps = state => ({
     loginError: state.connect.loginError,
 });
 const mapDispatchToProps = dispatch => ({
-    loginUser: (userMail, userPassword) => dispatch(loginUser(userMail, userPassword)),
+    loginUser: (userMail, userPassword, userRemember) => dispatch(loginUser(userMail, userPassword, userRemember)),
 });
 export default connect(
     mapStateToProps,
