@@ -17,9 +17,11 @@ let deviceWidth = Dimensions.get('window').width;
 
 export class ChapterListScreen extends React.Component {
 
-    static navigationOptions = {
-        title: 'Chapters list'
-    }
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: navigation.getParam('manga', 'none'),
+        };
+    };
 
     constructor(props) {
         super(props);
@@ -29,7 +31,6 @@ export class ChapterListScreen extends React.Component {
             loading: true,
             chapters: [],
             filter: 'down',
-            longPressedItem: null,
             refresh: false
         };
 
@@ -44,6 +45,8 @@ export class ChapterListScreen extends React.Component {
     }
 
     componentDidMount() {
+        this.props.navigation.setParams({ onPressFilter: this.onPressFilter });
+        this.props.navigation.setParams({ filter: this.state.filter });
         firebase.auth().signInWithEmailAndPassword(this.props.userMail, this.props.userPassword)
             .then(() => {
                 return firebase.firestore()
@@ -79,17 +82,27 @@ export class ChapterListScreen extends React.Component {
                 </View>
             );
         }
+        if (this.state.chapters.length ===0) {
+            return (
+                <View style={styles.loadingView}>
+                    <Text style={{
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        color: secondaryColor
+                        }}
+                    >No available chapters in firestore.</Text>
+                </View>
+            );
+        }
         return (
             <View style={styles.chapterListView}>
-                <View style={styles.chapterListTitleView}>
-                    <Text style={styles.chapterListTitle}>{this.state.manga}</Text>
-                    <TouchableOpacity onPress={() => this.onPressFilter()}>
+                    <TouchableOpacity style={styles.chapterFilterView} onPress={() => this.onPressFilter()}>
                         <Image
-                            style={styles.chapterListTitleImage}
+                            style={styles.chapterFilterImage}
                             source={(this.state.filter === 'down') ? filterListDownImg : filterListUpImg}
                         />
+                        <Text style={styles.chapterFilterText}>{(this.state.filter === 'down') ? "from new to old" : "from old to new"}</Text>
                     </TouchableOpacity>
-                </View>
                 <FlatList
                     data={(this.state.filter === 'down') ?
                         this.state.chapters.sort((a, b) => b.number - a.number)
@@ -101,7 +114,7 @@ export class ChapterListScreen extends React.Component {
                     initialNumToRender={30}
                     renderItem={({ item }) => {
                         return (
-                            <ChapterListItem manga={this.state.manga} chapter={item} navigation={this.props.navigation}/>
+                            <ChapterListItem manga={this.state.manga} chapter={item} navigation={this.props.navigation} />
                         )
                     }}
                 />
@@ -121,22 +134,22 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: primaryColor
     },
-    chapterListTitleView: {
+    chapterFilterView: {
         height: deviceWidth * 0.15,
         width: deviceWidth,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row'
     },
-    chapterListTitle: {
+    chapterFilterText: {
         fontSize: 18,
         fontWeight: 'bold',
         color: 'black'
     },
-    chapterListTitleImage: {
+    chapterFilterImage: {
         width: deviceWidth * 0.1,
         height: deviceWidth * 0.1,
-        marginStart: 10
+        marginEnd: 10
     }
 });
 
