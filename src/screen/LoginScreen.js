@@ -14,7 +14,8 @@ let deviceWidth = Dimensions.get('window').width;
 
 export class LoginScreen extends Component {
     static navigationOptions = {
-        title: 'Login'
+        title: 'Login',
+        header: null
     }
 
     constructor(props) {
