@@ -34,7 +34,8 @@ export class LoginScreen extends Component {
 
     componentWillMount() {
         const getUserInfos = async () => {
-            let userId = '';
+            let userMail = '';
+            let userPassword = '';
             try {
                 userMail = await AsyncStorage.getItem('userMail') || '';
                 userPassword = await AsyncStorage.getItem('userPassword') || '';
@@ -55,7 +56,7 @@ export class LoginScreen extends Component {
     }
 
     onToggleSwitchRememberMe = (value) => {
-        this.setState({ userRemember: value })
+        this.setState({ userRemember: value });
     }
 
     onLogin() {
@@ -110,7 +111,7 @@ export class LoginScreen extends Component {
                         <ActivityIndicator
                             size="large"
                             color={secondaryColor}
-                            style={{ marginTop: 15 }}
+                            style={{ marginTop: 15, height: 40 }}
                         />
                         :
                         <TouchableOpacity

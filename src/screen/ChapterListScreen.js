@@ -1,15 +1,14 @@
 import React from 'react';
 import {
     StyleSheet, Text, View, FlatList, TouchableOpacity,
-    ActivityIndicator, Image
+    ActivityIndicator, Image, Alert
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Dimensions } from 'react-native'
-
+import { Dimensions } from 'react-native';
 import firebase from 'react-native-firebase';
 
-import { ChapterListItem } from '../component/ChapterListItem';
+import ChapterListItem from '../component/ChapterListItem';
 
 import { primaryColor, secondaryColor } from '../colors';
 import { filterListDownImg, filterListUpImg } from "../images";
@@ -29,7 +28,9 @@ export class ChapterListScreen extends React.Component {
             manga: null,
             loading: true,
             chapters: [],
-            filter: 'down'
+            filter: 'down',
+            longPressedItem: null,
+            refresh: false
         };
 
         this.onPressFilter = this.onPressFilter.bind(this);
@@ -39,7 +40,7 @@ export class ChapterListScreen extends React.Component {
         const { navigation } = this.props;
         this.setState({
             manga: navigation.getParam('manga', 'none')
-        })
+        });
     }
 
     componentDidMount() {
@@ -51,42 +52,22 @@ export class ChapterListScreen extends React.Component {
             })
             .then((data) => {
                 return data._docs.map((item, index) => {
-                    return ({id: item.id, number: index+1})
+                    return ({ id: item.id, number: index + 1 })
                 })
             })
             .then((data) => {
                 this.setState({
-                    chapters: data.sort((a,b) => b.number - a.number),
+                    chapters: data.sort((a, b) => b.number - a.number),
                     loading: false
                 })
             })
-            .catch((error) => (console.log(error)));
-    }
-
-    getChapterNumber(chapterName) {
-        const start = chapterName.length - 4;
-        const end = chapterName.length;
-        return chapterName.substring(start, end);
-    }
-
-    onPressItem = (item) => {
-        if (this.props.connectivity) {
-            this.props.navigation.navigate('Reading', {
-                manga: this.state.manga,
-                chapter: item.id,
-                chapterNumber: item.number
-            });
-        } else {
-            Alert.alert('Warning', 'No internet connection.');
-        }
+            .catch((error) => (Alert.alert(error)));
     }
 
     onPressFilter() {
         this.setState({
             filter: (this.state.filter === 'down') ? 'up' : 'down',
-            chapters: (this.state.filter === 'down') ?
-                this.state.chapters.sort((a,b) => a.number - b.number) 
-                : this.state.chapters.sort((a,b) => b.number - a.number) 
+            refresh: !this.state.refresh,
         });
     }
 
@@ -110,16 +91,17 @@ export class ChapterListScreen extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <FlatList
-                    data={this.state.chapters}
-                    extraData={this.state}
+                    data={(this.state.filter === 'down') ?
+                        this.state.chapters.sort((a, b) => b.number - a.number)
+                        : this.state.chapters.sort((a, b) => a.number - b.number)
+                    }
+                    extraData={this.state.refresh}
                     keyExtractor={item => item.id}
                     numColumns={4}
                     initialNumToRender={30}
                     renderItem={({ item }) => {
                         return (
-                            <TouchableOpacity onPress={() => this.onPressItem(item)}>
-                                <ChapterListItem chapterNumber={this.getChapterNumber(item.id)} />
-                            </TouchableOpacity>
+                            <ChapterListItem manga={this.state.manga} chapter={item} navigation={this.props.navigation}/>
                         )
                     }}
                 />

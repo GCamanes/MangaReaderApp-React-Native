@@ -37,8 +37,8 @@ export class ReadingChapterScreen extends React.Component {
         };
 
         this.getCurrentPageUrl = this.getCurrentPageUrl.bind(this);
-        this.onPressNextPage = this.onPressNextPage.bind(this)
-        this.onPressPreviousPage = this.onPressPreviousPage.bind(this)
+        this.onPressNextPage = this.onPressNextPage.bind(this);
+        this.onPressPreviousPage = this.onPressPreviousPage.bind(this);
     }
 
     componentWillMount() {
@@ -46,7 +46,7 @@ export class ReadingChapterScreen extends React.Component {
         this.setState({
             manga: navigation.getParam('manga', 'none'),
             chapter: navigation.getParam('chapter', 'none'),
-        })
+        });
     }
 
     componentDidMount() {
@@ -59,7 +59,6 @@ export class ReadingChapterScreen extends React.Component {
             })
             .then((data) => {
                 return data._docs.map((item, index) => {
-                    
                     return (
                         { id: item.id, page: index, url: item._data.url }
                     )
@@ -79,25 +78,25 @@ export class ReadingChapterScreen extends React.Component {
     getChapterNumber(chapterName) {
         const start = chapterName.length - 4;
         const end = chapterName.length;
-        return chapterName.substring(start, end)
+        return chapterName.substring(start, end);
     }
 
     getPageNumber(pageNumber) {
         const start = pageNumber.length - 4;
         const end = pageNumber.length;
-        return pageNumber.substring(start, end)
+        return pageNumber.substring(start, end);
     }
 
     getCurrentPageUrl() {
-        return this.state.pages[this.state.currentPageIndex].url
+        return this.state.pages[this.state.currentPageIndex].url;
     }
 
     onPressNextPage() {
         if(this.state.currentPageIndex != (this.state.pages.length-1)) {
             this.setState({
                 currentPageIndex: this.state.currentPageIndex+1
-            })
-            this.props.loadImageRatio(this.state.pages[this.state.currentPageIndex+1].url)
+            });
+            this.props.loadImageRatio(this.state.pages[this.state.currentPageIndex+1].url);
         }
     }
 
@@ -105,8 +104,8 @@ export class ReadingChapterScreen extends React.Component {
         if(this.state.currentPageIndex != 0) {
             this.setState({
                 currentPageIndex: this.state.currentPageIndex-1
-            })
-            this.props.loadImageRatio(this.state.pages[this.state.currentPageIndex-1].url)
+            });
+            this.props.loadImageRatio(this.state.pages[this.state.currentPageIndex-1].url);
         }
     }
 

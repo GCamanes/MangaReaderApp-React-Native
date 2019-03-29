@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 
-let deviceWidth = Dimensions.get('window').width
+let deviceWidth = Dimensions.get('window').width;
 
 export class PageView extends React.Component {
     constructor(props) {
