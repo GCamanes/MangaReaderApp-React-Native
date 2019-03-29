@@ -3,6 +3,8 @@ import {
     USER_LOGGEDIN, LOGIN_USER, LOGOUT_USER
 } from './connect.action';
 
+import {AsyncStorage} from 'react-native';
+
 export const initialState = {
     connectivity: 'offline',
     userMail: "",
@@ -20,6 +22,15 @@ export function connectReducer(state = initialState, action) {
             };
         }
         case USER_LOGGEDIN: {
+            if (action.userRemember && action.userMail && action.userPassword) {
+                console.log("saving user infos");
+                AsyncStorage.setItem('userMail', action.userMail);
+                AsyncStorage.setItem('userPassword', action.userPassword);
+            } else {
+                console.log("deleting user infos");
+                AsyncStorage.removeItem('userMail');
+                AsyncStorage.removeItem('userPassword');
+            }
             return {
                 ...state,
                 userMail: (action.userMail) ? action.userMail : "",

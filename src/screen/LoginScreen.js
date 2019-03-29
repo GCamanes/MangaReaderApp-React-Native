@@ -3,6 +3,7 @@ import {
     Alert, TouchableOpacity, TextInput, Dimensions,
     View, StyleSheet, ActivityIndicator, Text, Switch
 } from 'react-native';
+import { AsyncStorage } from 'react-native';
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -22,13 +23,35 @@ export class LoginScreen extends Component {
         super(props);
 
         this.state = {
-            userMail: 'guillaume.camanes@gmail.com',
-            userPassword: 'MRAbalaise',
+            userMail: '',
+            userPassword: '',
             userRemember: false
         };
 
         this.onToggleSwitchRememberMe = this.onToggleSwitchRememberMe.bind(this);
         this.onLogin = this.onLogin.bind(this);
+    }
+
+    componentWillMount() {
+        const getUserInfos = async () => {
+            let userId = '';
+            try {
+                userMail = await AsyncStorage.getItem('userMail') || '';
+                userPassword = await AsyncStorage.getItem('userPassword') || '';
+            } catch (error) {
+                // Error retrieving data
+                console.log(error.message);
+            }
+            return {userMail: userMail, userPassword: userPassword};
+        }
+        getUserInfos()
+            .then((userInfos) => {
+                this.setState({
+                    userMail: userInfos.userMail,
+                    userPassword: userInfos.userPassword,
+                    userRemember: (userInfos.userMail !== '') ? true : false
+                })
+            })
     }
 
     onToggleSwitchRememberMe = (value) => {

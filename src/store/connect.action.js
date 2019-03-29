@@ -1,4 +1,5 @@
 import firebase from 'react-native-firebase';
+import {AsyncStorage} from 'react-native';
 
 export const UPDATE_CONNECTIVITY = 'UPDATE_CONNECTIVITY';
 export const USER_LOGGEDIN = 'USER_LOGGEDIN';
@@ -17,6 +18,7 @@ export function userLoggedIn(data) {
         type: USER_LOGGEDIN,
         userMail: data.userMail,
         userPassword: data.userPassword,
+        userRemember: data.userRemember,
         error: data.error,
     };
 }
@@ -25,8 +27,7 @@ export function loginUser(userMail, userPassword, userRemember) {
     return (dispatch) => {
         dispatch({ type: LOGIN_USER });
         return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
-            .then(() => console.log(userRemember))
-            .then(() => dispatch(userLoggedIn({ userMail: userMail, userPassword: userPassword })))
+            .then(() => dispatch(userLoggedIn({ userMail: userMail, userPassword: userPassword, userRemember: userRemember })))
             .catch((error) => dispatch(userLoggedIn({ error: "Wrong mail or password" })))
     };
 }
