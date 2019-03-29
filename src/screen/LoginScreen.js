@@ -66,10 +66,6 @@ export class LoginScreen extends Component {
                 this.props.loginUser(userMail, userPassword, userRemember)
                     .then(() => {
                         if (this.props.loginError === undefined) {
-                            this.setState({
-                                userMail: '',
-                                userPassword: '',
-                            })
                             this.props.navigation.navigate('Home');
                         } else {
                             Alert.alert("Warning", this.props.loginError);
