@@ -16,5 +16,5 @@ Personal project : app to read manga scans from a database created on Cloud Fire
 
 ## Reading screen
 > Possibility to zoom on page images (see [@dudigital/react-native-zoomable-view](https://github.com/DuDigital/react-native-zoomable-view))
-<img src="./screenshots/mangareaderapp-reading.png.png" width="280" height="500"/>
+<img src="./screenshots/mangareaderapp-reading.png" width="280" height="500"/>
 <img src="./screenshots/mangareaderapp-reading-zoom.png" width="280" height="500"/>
