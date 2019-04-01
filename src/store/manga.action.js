@@ -3,6 +3,9 @@ import firebase from "react-native-firebase";
 export const MANGAS_LOADED = 'MANGAS_LOADED';
 export const LOAD_MANGAS = 'LOAD_MANGAS';
 
+export const CHAPTERS_LOADED = 'CHAPTERS_LOADED';
+export const LOAD_CHAPTERS = 'LOAD_CHAPTERS';
+
 
 export function mangasLoaded(data) {
     return {
@@ -17,12 +20,40 @@ export function loadMangas(userMail, userPassword) {
         dispatch({ type: LOAD_MANGAS });
         return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
             .then(() => {
-                return firebase.firestore().collection('mangas').get()
+                return firebase.firestore()
+                    .collection('mangas').get()
             })
             .then((data) => {
                 return data._docs.map((item) => (item.id))
             })
             .then((data) => dispatch(mangasLoaded({ mangas: data })))
             .catch((error) => dispatch(mangasLoaded({ error: error })));
+    };
+}
+
+export function chaptersLoaded(data) {
+    return {
+        type: CHAPTERS_LOADED,
+        chapters: data.chapters,
+        error: data.error,
+    };
+}
+
+export function loadChapters(userMail, userPassword, manga) {
+    return (dispatch) => {
+        dispatch({ type: LOAD_CHAPTERS });
+        return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
+            .then(() => {
+                return firebase.firestore()
+                    .collection('mangas').doc(manga)
+                    .collection('chapters').get();
+            })
+            .then((data) => {
+                return data._docs.map((item, index) => {
+                    return ({ id: item.id, number: index + 1 })
+                })
+            })
+            .then((data) => dispatch(chaptersLoaded({ chapters: data.sort((a, b) => b.number - a.number)})))
+            .catch((error) => dispatch(chaptersLoaded({ error: error })));
     };
 }

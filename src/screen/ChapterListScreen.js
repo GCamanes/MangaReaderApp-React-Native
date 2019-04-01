@@ -10,6 +10,8 @@ import firebase from 'react-native-firebase';
 
 import ChapterListItem from '../component/ChapterListItem';
 
+import {loadChapters, loadMangas} from '../store/manga.action';
+
 import { primaryColor, secondaryColor } from '../colors';
 import { filterListDownImg, filterListUpImg } from "../images";
 
@@ -28,8 +30,6 @@ export class ChapterListScreen extends React.Component {
 
         this.state = {
             manga: null,
-            loading: true,
-            chapters: [],
             filter: 'down',
             refresh: false
         };
@@ -45,26 +45,16 @@ export class ChapterListScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.props.navigation.setParams({ onPressFilter: this.onPressFilter });
-        this.props.navigation.setParams({ filter: this.state.filter });
-        firebase.auth().signInWithEmailAndPassword(this.props.userMail, this.props.userPassword)
-            .then(() => {
-                return firebase.firestore()
-                    .collection('mangas').doc(this.state.manga)
-                    .collection('chapters').get();
-            })
-            .then((data) => {
-                return data._docs.map((item, index) => {
-                    return ({ id: item.id, number: index + 1 })
-                })
-            })
-            .then((data) => {
-                this.setState({
-                    chapters: data.sort((a, b) => b.number - a.number),
-                    loading: false
-                })
-            })
-            .catch((error) => (Alert.alert(error)));
+        if (this.props.connectivity) {
+            this.props.loadChapters(this.props.userMail, this.props.userPassword, this.state.manga)
+                .then(() => {
+                    if (this.props.mangasError !== undefined) {
+                        Alert.alert("Warning", this.props.chaptersError);
+                    }
+                });
+        } else {
+            Alert.alert('Warning', 'No internet connection.');
+        }
     }
 
     onPressFilter() {
@@ -75,14 +65,14 @@ export class ChapterListScreen extends React.Component {
     }
 
     render() {
-        if (this.state.loading) {
+        if (this.props.chaptersLoading) {
             return (
                 <View style={styles.loadingView}>
                     <ActivityIndicator size="large" color={secondaryColor} />
                 </View>
             );
         }
-        if (this.state.chapters.length ===0) {
+        if (this.props.chapters.length ===0) {
             return (
                 <View style={styles.loadingView}>
                     <Text style={{
@@ -105,8 +95,8 @@ export class ChapterListScreen extends React.Component {
                     </TouchableOpacity>
                 <FlatList
                     data={(this.state.filter === 'down') ?
-                        this.state.chapters.sort((a, b) => b.number - a.number)
-                        : this.state.chapters.sort((a, b) => a.number - b.number)
+                        this.props.chapters.sort((a, b) => b.number - a.number)
+                        : this.props.chapters.sort((a, b) => a.number - b.number)
                     }
                     extraData={this.state.refresh}
                     keyExtractor={item => item.id}
@@ -160,15 +150,29 @@ ChapterListScreen.propTypes = {
 
     connectivity: PropTypes.string.isRequired,
     userMail: PropTypes.string.isRequired,
-    userPassword: PropTypes.string.isRequired
+    userPassword: PropTypes.string.isRequired,
+
+    chapters: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            number: PropTypes.number.isRequired
+        })
+    ),
+    chaptersError: PropTypes.string,
+    chaptersLoading: PropTypes.bool.isRequired,
+    loadChapters: PropTypes.func.isRequired
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
     userMail: state.connect.userMail,
-    userPassword: state.connect.userPassword
+    userPassword: state.connect.userPassword,
+
+    chapters: state.manga.chapters,
+    chaptersError: state.manga.chaptersError,
+    chaptersLoading: state.manga.chaptersLoading,
 });
 const mapDispatchToProps = dispatch => ({
-
+    loadChapters: (userMail, userPassword, manga) => dispatch(loadChapters(userMail, userPassword, manga)),
 });
 export default connect(
     mapStateToProps,

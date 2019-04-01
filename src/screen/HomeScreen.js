@@ -123,6 +123,7 @@ HomeScreen.propTypes = {
     ),
     mangasError: PropTypes.string,
     mangasLoading: PropTypes.bool.isRequired,
+    loadMangas: PropTypes.func.isRequired
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
@@ -132,7 +133,6 @@ const mapStateToProps = state => ({
     mangas: state.manga.mangas,
     mangasError: state.manga.mangasError,
     mangasLoading: state.manga.mangasLoading,
-    loadMangas: PropTypes.func.isRequired
 });
 const mapDispatchToProps = dispatch => ({
     loadMangas: (userMail, userPassword) => dispatch(loadMangas(userMail, userPassword)),

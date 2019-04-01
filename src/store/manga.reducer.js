@@ -1,11 +1,16 @@
 import {
-    LOAD_MANGAS, MANGAS_LOADED
+    LOAD_MANGAS, MANGAS_LOADED,
+    LOAD_CHAPTERS, CHAPTERS_LOADED
 } from './manga.action';
 
 export const initialState = {
     mangas: [],
     mangasError: undefined,
     mangasLoading: false,
+
+    chapters: [],
+    chaptersError: undefined,
+    chaptersLoading: false,
 };
 
 export function mangaReducer(state = initialState, action) {
@@ -22,6 +27,20 @@ export function mangaReducer(state = initialState, action) {
             return {
                 ...state,
                 mangasLoading: true,
+            };
+        }
+        case CHAPTERS_LOADED: {
+            return {
+                ...state,
+                chapters: (action.chapters) ? action.chapters : [],
+                chaptersError: action.error,
+                chaptersLoading: false,
+            };
+        }
+        case LOAD_CHAPTERS: {
+            return {
+                ...state,
+                chaptersLoading: true,
             };
         }
         default:
