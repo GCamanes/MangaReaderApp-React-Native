@@ -9,8 +9,6 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import firebase from 'react-native-firebase';
-
 import { MangaListItem } from '../component/MangaListItem';
 import LogoutButton from '../component/LogoutButton'
 import { primaryColor, secondaryColor } from '../colors';
@@ -133,7 +131,8 @@ const mapStateToProps = state => ({
 
     mangas: state.manga.mangas,
     mangasError: state.manga.mangasError,
-    mangasLoading: state.manga.mangasLoading
+    mangasLoading: state.manga.mangasLoading,
+    loadMangas: PropTypes.func.isRequired
 });
 const mapDispatchToProps = dispatch => ({
     loadMangas: (userMail, userPassword) => dispatch(loadMangas(userMail, userPassword)),
