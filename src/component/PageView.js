@@ -55,7 +55,6 @@ PageView.propTypes = {
     url: PropTypes.string.isRequired,
     ratio: PropTypes.number.isRequired,
     ratioLoading: PropTypes.bool.isRequired,
-    ratioLoading: PropTypes.bool.isRequired,
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,

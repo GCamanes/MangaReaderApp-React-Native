@@ -15,6 +15,9 @@ import { MangaListItem } from '../component/MangaListItem';
 import LogoutButton from '../component/LogoutButton'
 import { primaryColor, secondaryColor } from '../colors';
 
+
+import { loadMangas } from '../store/manga.action';
+
 let deviceWidth = Dimensions.get('window').width;
 
 class HomeScreen extends Component {
@@ -26,29 +29,20 @@ class HomeScreen extends Component {
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            loading: true,
-            mangas: []
-        };
     }
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-        firebase.auth().signInWithEmailAndPassword(this.props.userMail, this.props.userPassword)
-            .then(() => {
-                return firebase.firestore().collection('mangas').get()
-            })
-            .then((data) => {
-                return data._docs.map((item) => (item.id))
-            })
-            .then((data) => {
-                this.setState({
-                    mangas: data,
-                    loading: false
-                })
-            })
-            .catch((error) => (console.log(error)));
+        if (this.props.connectivity) {
+            this.props.loadMangas(this.props.userMail, this.props.userPassword)
+                .then(() => {
+                    if (this.props.mangasError !== undefined) {
+                        Alert.alert("Warning", this.props.mangasError);
+                    }
+                });
+        } else {
+            Alert.alert('Warning', 'No internet connection.');
+        }
     }
 
     componentWillUnmount() {
@@ -82,7 +76,7 @@ class HomeScreen extends Component {
     };
 
     render() {
-        if (this.state.loading) {
+        if (this.props.mangasLoading) {
             return (
                 <View style={styles.loadingView}>
                     <ActivityIndicator size="large" color={secondaryColor} />
@@ -92,10 +86,10 @@ class HomeScreen extends Component {
         return (
             <View style={{ flex: 1, backgroundColor: primaryColor }}>
                 <FlatList
-                    data={this.state.mangas}
+                    data={this.props.mangas}
                     keyExtractor={item => item}
                     ItemSeparatorComponent={this.renderSeparator}
-                    renderItem={({ item, index }) => {
+                    renderItem={({ item }) => {
                         return (
                             <TouchableOpacity onPress={() => this.onPressItem(item)}>
                                 <MangaListItem manga={item}/>
@@ -115,9 +109,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#F5FCFF'
     },
-    scrollview: {
-        width: deviceWidth,
-    },
 });
 
 HomeScreen.propTypes = {
@@ -127,15 +118,25 @@ HomeScreen.propTypes = {
 
     connectivity: PropTypes.string.isRequired,
     userMail: PropTypes.string.isRequired,
-    userPassword: PropTypes.string.isRequired
+    userPassword: PropTypes.string.isRequired,
+
+    mangas: PropTypes.arrayOf(
+        PropTypes.string.isRequired
+    ),
+    mangasError: PropTypes.string,
+    mangasLoading: PropTypes.bool.isRequired,
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
     userMail: state.connect.userMail,
-    userPassword: state.connect.userPassword
+    userPassword: state.connect.userPassword,
+
+    mangas: state.manga.mangas,
+    mangasError: state.manga.mangasError,
+    mangasLoading: state.manga.mangasLoading
 });
 const mapDispatchToProps = dispatch => ({
-
+    loadMangas: (userMail, userPassword) => dispatch(loadMangas(userMail, userPassword)),
 });
 export default connect(
     mapStateToProps,
