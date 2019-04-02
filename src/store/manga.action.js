@@ -9,6 +9,8 @@ export const LOAD_CHAPTERS = 'LOAD_CHAPTERS';
 export const PAGES_LOADED = 'PAGES_LOADED';
 export const LOAD_PAGES = 'LOAD_PAGES';
 
+export const CHAPTERS_FILTER = 'CHAPTERS_FILTER';
+
 
 export function mangasLoaded(data) {
     return {
@@ -89,4 +91,10 @@ export function loadPages(userMail, userPassword, manga, chapter) {
             .then((data) => dispatch(pagesLoaded({pages: data})))
             .catch((error) => dispatch(pagesLoaded({error: error})));
     };
+}
+
+export function filterChapterList() {
+    return {
+        type: CHAPTERS_FILTER,
+    }
 }

@@ -13,6 +13,7 @@ import {loadChapters} from '../store/manga.action';
 
 import {primaryColor, secondaryColor} from '../colors';
 import {filterListDownImg, filterListUpImg} from "../images";
+import FilterButton from "../component/FilterButton";
 
 let deviceWidth = Dimensions.get('window').width;
 
@@ -21,6 +22,7 @@ export class ChapterListScreen extends React.Component {
     static navigationOptions = ({navigation}) => {
         return {
             title: navigation.getParam('manga', 'none'),
+            headerRight: <FilterButton />,
         };
     };
 
@@ -85,20 +87,9 @@ export class ChapterListScreen extends React.Component {
         }
         return (
             <View style={styles.chapterListView}>
-                <TouchableOpacity style={styles.chapterFilterView} onPress={() => this.onPressFilter()}>
-                    <Image
-                        style={styles.chapterFilterImage}
-                        source={(this.state.filter === 'down') ? filterListDownImg : filterListUpImg}
-                    />
-                    <Text
-                        style={styles.chapterFilterText}>{(this.state.filter === 'down') ? "from new to old" : "from old to new"}</Text>
-                </TouchableOpacity>
                 <FlatList
-                    data={(this.state.filter === 'down') ?
-                        this.props.chapters.sort((a, b) => b.number - a.number)
-                        : this.props.chapters.sort((a, b) => a.number - b.number)
-                    }
-                    extraData={this.state.refresh}
+                    data={this.props.chapters}
+                    extraData={this.props.chaptersListNeedRefresh}
                     keyExtractor={item => item.id}
                     numColumns={4}
                     initialNumToRender={30}
@@ -123,7 +114,7 @@ const styles = StyleSheet.create({
     },
     chapterListView: {
         flex: 1,
-        backgroundColor: primaryColor
+        backgroundColor: primaryColor,
     },
     chapterFilterView: {
         height: deviceWidth * 0.15,
@@ -161,7 +152,9 @@ ChapterListScreen.propTypes = {
     ),
     chaptersError: PropTypes.string,
     chaptersLoading: PropTypes.bool.isRequired,
-    loadChapters: PropTypes.func.isRequired
+    loadChapters: PropTypes.func.isRequired,
+    chaptersListFilter: PropTypes.string.isRequired,
+    chaptersListNeedRefresh: PropTypes.bool.isRequired,
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
@@ -171,6 +164,8 @@ const mapStateToProps = state => ({
     chapters: state.manga.chapters,
     chaptersError: state.manga.chaptersError,
     chaptersLoading: state.manga.chaptersLoading,
+    chaptersListFilter: state.manga.chaptersListFilter,
+    chaptersListNeedRefresh: state.manga.chaptersListNeedRefresh
 });
 const mapDispatchToProps = dispatch => ({
     loadChapters: (userMail, userPassword, manga) => dispatch(loadChapters(userMail, userPassword, manga)),

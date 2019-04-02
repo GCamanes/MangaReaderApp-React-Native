@@ -1,7 +1,7 @@
 import {
     LOAD_MANGAS, MANGAS_LOADED,
     LOAD_CHAPTERS, CHAPTERS_LOADED,
-    LOAD_PAGES, PAGES_LOADED,
+    LOAD_PAGES, PAGES_LOADED, CHAPTERS_FILTER,
 } from './manga.action';
 
 export const initialState = {
@@ -12,6 +12,9 @@ export const initialState = {
     chapters: [],
     chaptersError: undefined,
     chaptersLoading: false,
+
+    chaptersListFilter: 'down',
+    chaptersListNeedRefresh: false,
 
     pages: [],
     pagesError: undefined,
@@ -61,6 +64,17 @@ export function mangaReducer(state = initialState, action) {
                 ...state,
                 pagesLoading: true,
             };
+        }
+        case CHAPTERS_FILTER: {
+            return {
+                ...state,
+                chapters: (state.chaptersListFilter === 'down') ?
+                    state.chapters.sort((a, b) => a.number - b.number)
+                    :
+                    state.chapters.sort((a, b) => b.number - a.number),
+                chaptersListFilter: (state.chaptersListFilter === 'down') ? 'up' : 'down',
+                chaptersListNeedRefresh: !state.chaptersListNeedRefresh
+            }
         }
         default:
             return state;
