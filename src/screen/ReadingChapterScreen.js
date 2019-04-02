@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { Dimensions } from 'react-native';
 import { AsyncStorage } from 'react-native';
 
-import { loadPages} from '../store/manga.action'
+import { loadPages, markChapterAsRead } from '../store/manga.action'
 import { loadImageRatio } from '../store/image.action';
 import { primaryColor, secondaryColor } from '../colors';
 
@@ -80,15 +80,7 @@ export class ReadingChapterScreen extends React.Component {
     }
 
     onPressMarkAsRead() {
-        const markAsRead = async (chapter) => {
-            try {
-                await AsyncStorage.setItem(chapter, '1');
-            } catch (error) {
-                // Error retrieving data
-                console.log(error.message);
-            }
-        };
-        markAsRead(this.state.chapter)
+        this.props.markChapterAsRead(this.state.chapter, false)
         .then(() => this.props.navigation.navigate('Chapters'));
     }
 
@@ -230,6 +222,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
     loadPages: (userMail, userPassword, manga, chapter) => dispatch(loadPages(userMail, userPassword, manga, chapter)),
+    markChapterAsRead: (chapter, overwrite) => dispatch(markChapterAsRead(chapter, overwrite)),
     loadImageRatio: (url) => dispatch(loadImageRatio(url)),
 });
 export default connect(

@@ -12,7 +12,6 @@ import ChapterListItem from '../component/ChapterListItem';
 import {loadChapters} from '../store/manga.action';
 
 import {primaryColor, secondaryColor} from '../colors';
-import {filterListDownImg, filterListUpImg} from "../images";
 import FilterButton from "../component/FilterButton";
 
 let deviceWidth = Dimensions.get('window').width;

@@ -1,4 +1,5 @@
 import firebase from "react-native-firebase";
+import {AsyncStorage} from "react-native";
 
 export const MANGAS_LOADED = 'MANGAS_LOADED';
 export const LOAD_MANGAS = 'LOAD_MANGAS';
@@ -11,6 +12,8 @@ export const LOAD_PAGES = 'LOAD_PAGES';
 
 export const CHAPTERS_FILTER = 'CHAPTERS_FILTER';
 
+export const CHAPTER_MARKED_AS_READ = 'CHAPTER_MARKED_AS_READ';
+export const MARK_CHAPTER_AS_READ = 'MARK_CHAPTER_AS_READ';
 
 export function mangasLoaded(data) {
     return {
@@ -97,4 +100,41 @@ export function filterChapterList() {
     return {
         type: CHAPTERS_FILTER,
     }
+}
+
+export function chapterMarkedAsRead(data) {
+    return {
+        type: CHAPTER_MARKED_AS_READ,
+        chapter: data.chapter
+    };
+}
+
+export function markChapterAsRead(chapter, overwrite) {
+    return (dispatch) => {
+        dispatch({type: MARK_CHAPTER_AS_READ});
+        const isChapterRead = async (chapter) => {
+            let isChapterRead = '0';
+            try {
+                isChapterRead = await AsyncStorage.getItem(chapter) || '0';
+            } catch (error) {
+                console.log(error.message);
+            }
+            return isChapterRead;
+        }
+        const markAsRead = async (chapter, isChapterRead, overwrite) => {
+            try {
+                if (overwrite) {
+                    await AsyncStorage.setItem(chapter, (isChapterRead === '1')?'0':'1');
+                } else {
+                    await AsyncStorage.setItem(chapter, '1');
+                }
+            } catch (error) {
+                console.log(error.message);
+            }
+            return chapter;
+        };
+        return isChapterRead(chapter)
+            .then((isChapterRead) => markAsRead(chapter, isChapterRead, overwrite))
+            .then(() => dispatch(chapterMarkedAsRead({chapter: chapter})));
+    };
 }

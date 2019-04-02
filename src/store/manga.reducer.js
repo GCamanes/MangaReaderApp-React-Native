@@ -1,7 +1,9 @@
 import {
     LOAD_MANGAS, MANGAS_LOADED,
     LOAD_CHAPTERS, CHAPTERS_LOADED,
-    LOAD_PAGES, PAGES_LOADED, CHAPTERS_FILTER,
+    LOAD_PAGES, PAGES_LOADED,
+    CHAPTERS_FILTER,
+    MARK_CHAPTER_AS_READ, CHAPTER_MARKED_AS_READ,
 } from './manga.action';
 
 export const initialState = {
@@ -13,12 +15,14 @@ export const initialState = {
     chaptersError: undefined,
     chaptersLoading: false,
 
-    chaptersListFilter: 'down',
-    chaptersListNeedRefresh: false,
-
     pages: [],
     pagesError: undefined,
     pagesLoading: false,
+
+    chaptersListFilter: 'down',
+    chaptersListNeedRefresh: false,
+
+    chapterMarkingAsRead: false
 };
 
 export function mangaReducer(state = initialState, action) {
@@ -38,6 +42,7 @@ export function mangaReducer(state = initialState, action) {
             };
         }
         case CHAPTERS_LOADED: {
+            console.log(action.chapters)
             return {
                 ...state,
                 chapters: (action.chapters) ? action.chapters : [],
@@ -75,6 +80,20 @@ export function mangaReducer(state = initialState, action) {
                 chaptersListFilter: (state.chaptersListFilter === 'down') ? 'up' : 'down',
                 chaptersListNeedRefresh: !state.chaptersListNeedRefresh
             }
+        }
+        case CHAPTER_MARKED_AS_READ: {
+            return {
+                ...state,
+                chapterMarkingAsRead: true,
+                chaptersListNeedRefresh: !state.chaptersListNeedRefresh
+
+            };
+        }
+        case MARK_CHAPTER_AS_READ: {
+            return {
+                ...state,
+                chapterMarkingAsRead: true,
+            };
         }
         default:
             return state;
