@@ -1,14 +1,13 @@
 import React from 'react';
 import {
     StyleSheet, Text, View, TouchableOpacity, Image,
-    ActivityIndicator
+    ActivityIndicator, Alert
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native';
 
-import firebase from 'react-native-firebase';
-
+import { loadPages} from '../store/manga.action'
 import { loadImageRatio } from '../store/image.action';
 import { primaryColor, secondaryColor } from '../colors';
 
@@ -31,8 +30,6 @@ export class ReadingChapterScreen extends React.Component {
         this.state = {
             manga: null,
             chapter: null,
-            loading: true,
-            pages: [],
             currentPageIndex: 0,
         };
 
@@ -50,41 +47,12 @@ export class ReadingChapterScreen extends React.Component {
     }
 
     componentDidMount() {
-        firebase.auth().signInWithEmailAndPassword(this.props.userMail, this.props.userPassword)
-            .then(() => {
-                return firebase.firestore()
-                    .collection('mangas').doc(this.state.manga)
-                    .collection('chapters').doc(this.state.chapter)
-                    .collection('pages').get();
-            })
-            .then((data) => {
-                return data._docs.map((item, index) => {
-                    return (
-                        { id: item.id, page: index, url: item._data.url }
-                    )
-                })
-            })
-            .then((data) => {
-                console.log(data)
-                this.setState({
-                    pages: data,
-                    loading: false
-                })
-            })
-            .then(() => this.props.loadImageRatio(this.state.pages[0].url))
-            .catch((error) => (console.log(error)));
-    }
-
-    getChapterNumber(chapterName) {
-        const start = chapterName.length - 4;
-        const end = chapterName.length;
-        return chapterName.substring(start, end);
-    }
-
-    getPageNumber(pageNumber) {
-        const start = pageNumber.length - 4;
-        const end = pageNumber.length;
-        return pageNumber.substring(start, end);
+        this.props.loadPages(
+            this.props.userMail, this.props.userPassword,
+            this.state.manga, this.state.chapter
+        )
+        .then(() => this.props.loadImageRatio(this.props.pages[0].url))
+        .catch((error) => (console.log(error)));
     }
 
     getCurrentPageUrl() {
@@ -92,11 +60,11 @@ export class ReadingChapterScreen extends React.Component {
     }
 
     onPressNextPage() {
-        if(this.state.currentPageIndex != (this.state.pages.length-1)) {
+        if(this.state.currentPageIndex != (this.props.pages.length-1)) {
             this.setState({
                 currentPageIndex: this.state.currentPageIndex+1
             });
-            this.props.loadImageRatio(this.state.pages[this.state.currentPageIndex+1].url);
+            this.props.loadImageRatio(this.props.pages[this.state.currentPageIndex+1].url);
         }
     }
 
@@ -105,12 +73,12 @@ export class ReadingChapterScreen extends React.Component {
             this.setState({
                 currentPageIndex: this.state.currentPageIndex-1
             });
-            this.props.loadImageRatio(this.state.pages[this.state.currentPageIndex-1].url);
+            this.props.loadImageRatio(this.props.pages[this.state.currentPageIndex-1].url);
         }
     }
 
     render() {
-        if (this.state.loading) {
+        if (this.props.pagesLoading) {
             return (
                 <View style={styles.loadingView}>
                     <ActivityIndicator size="large" color={secondaryColor} />
@@ -142,13 +110,13 @@ export class ReadingChapterScreen extends React.Component {
 
                         <View style={styles.bottomNavPartView}>
                             <Text style={styles.bottomNavTouchableText}>
-                                {this.state.currentPageIndex+1}/{this.state.pages.length}
+                                {this.state.currentPageIndex+1}/{this.props.pages.length}
                             </Text>
                         </View>
 
                         <View style={styles.bottomNavPartView}>
                             {
-                                (this.state.currentPageIndex !== (this.state.pages.length-1)) &&
+                                (this.state.currentPageIndex !== (this.props.pages.length-1)) &&
                                     <TouchableOpacity
                                         style={styles.bottomNavTouchableView}
                                         onPress={() => this.onPressNextPage()} >
@@ -214,13 +182,29 @@ ReadingChapterScreen.propTypes = {
     userMail: PropTypes.string.isRequired,
     userPassword: PropTypes.string.isRequired,
     loadImageRatio: PropTypes.func.isRequired,
+
+    pages: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            page: PropTypes.number.isRequired,
+            url: PropTypes.string.isRequired
+        })
+    ),
+    pagesError: PropTypes.string,
+    pagesLoading: PropTypes.bool.isRequired,
+    loadPages: PropTypes.func.isRequired
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
     userMail: state.connect.userMail,
-    userPassword: state.connect.userPassword
+    userPassword: state.connect.userPassword,
+
+    pages: state.manga.pages,
+    pagesError: state.manga.pagesError,
+    pagesLoading: state.manga.pagesLoading,
 });
 const mapDispatchToProps = dispatch => ({
+    loadPages: (userMail, userPassword, manga, chapter) => dispatch(loadPages(userMail, userPassword, manga, chapter)),
     loadImageRatio: (url) => dispatch(loadImageRatio(url)),
 });
 export default connect(
