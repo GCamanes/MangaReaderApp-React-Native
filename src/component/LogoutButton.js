@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { logoutUser } from '../store/connect.action';
 
-import { LogoutImg } from '../images';
+import { logoutImg } from '../images';
 
 const styles = StyleSheet.create({
     image: {
@@ -38,7 +38,7 @@ export class LogoutButton extends Component {
                     ],
                 );
             }}>
-                <Image style={styles.image} source={LogoutImg} />
+                <Image style={styles.image} source={logoutImg} />
             </TouchableOpacity>
         );
     }

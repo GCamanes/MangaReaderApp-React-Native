@@ -4,22 +4,21 @@ import {
     ActivityIndicator, Image, Alert
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Dimensions } from 'react-native';
-import firebase from 'react-native-firebase';
+import {connect} from 'react-redux';
+import {Dimensions} from 'react-native';
 
 import ChapterListItem from '../component/ChapterListItem';
 
-import {loadChapters, loadMangas} from '../store/manga.action';
+import {loadChapters} from '../store/manga.action';
 
-import { primaryColor, secondaryColor } from '../colors';
-import { filterListDownImg, filterListUpImg } from "../images";
+import {primaryColor, secondaryColor} from '../colors';
+import {filterListDownImg, filterListUpImg} from "../images";
 
 let deviceWidth = Dimensions.get('window').width;
 
 export class ChapterListScreen extends React.Component {
 
-    static navigationOptions = ({ navigation }) => {
+    static navigationOptions = ({navigation}) => {
         return {
             title: navigation.getParam('manga', 'none'),
         };
@@ -38,7 +37,7 @@ export class ChapterListScreen extends React.Component {
     }
 
     componentWillMount() {
-        const { navigation } = this.props;
+        const {navigation} = this.props;
         this.setState({
             manga: navigation.getParam('manga', 'none')
         });
@@ -68,31 +67,32 @@ export class ChapterListScreen extends React.Component {
         if (this.props.chaptersLoading) {
             return (
                 <View style={styles.loadingView}>
-                    <ActivityIndicator size="large" color={secondaryColor} />
+                    <ActivityIndicator size="large" color={secondaryColor}/>
                 </View>
             );
         }
-        if (this.props.chapters.length ===0) {
+        if (this.props.chapters.length === 0) {
             return (
                 <View style={styles.loadingView}>
                     <Text style={{
                         fontSize: 18,
                         fontWeight: 'bold',
                         color: secondaryColor
-                        }}
+                    }}
                     >No available chapters in firestore.</Text>
                 </View>
             );
         }
         return (
             <View style={styles.chapterListView}>
-                    <TouchableOpacity style={styles.chapterFilterView} onPress={() => this.onPressFilter()}>
-                        <Image
-                            style={styles.chapterFilterImage}
-                            source={(this.state.filter === 'down') ? filterListDownImg : filterListUpImg}
-                        />
-                        <Text style={styles.chapterFilterText}>{(this.state.filter === 'down') ? "from new to old" : "from old to new"}</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity style={styles.chapterFilterView} onPress={() => this.onPressFilter()}>
+                    <Image
+                        style={styles.chapterFilterImage}
+                        source={(this.state.filter === 'down') ? filterListDownImg : filterListUpImg}
+                    />
+                    <Text
+                        style={styles.chapterFilterText}>{(this.state.filter === 'down') ? "from new to old" : "from old to new"}</Text>
+                </TouchableOpacity>
                 <FlatList
                     data={(this.state.filter === 'down') ?
                         this.props.chapters.sort((a, b) => b.number - a.number)
@@ -102,9 +102,10 @@ export class ChapterListScreen extends React.Component {
                     keyExtractor={item => item.id}
                     numColumns={4}
                     initialNumToRender={30}
-                    renderItem={({ item }) => {
+                    renderItem={({item}) => {
                         return (
-                            <ChapterListItem manga={this.state.manga} chapter={item} navigation={this.props.navigation} />
+                            <ChapterListItem manga={this.state.manga} chapter={item}
+                                             navigation={this.props.navigation}/>
                         )
                     }}
                 />

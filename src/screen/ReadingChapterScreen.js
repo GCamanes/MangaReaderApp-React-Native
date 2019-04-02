@@ -6,13 +6,14 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native';
+import { AsyncStorage } from 'react-native';
 
 import { loadPages} from '../store/manga.action'
 import { loadImageRatio } from '../store/image.action';
 import { primaryColor, secondaryColor } from '../colors';
 
 import PageView from '../component/PageView';
-import { leftArrowImg, rightArrowImg } from '../images';
+import { leftArrowImg, rightArrowImg, asReadImg } from '../images';
 
 let deviceWidth = Dimensions.get('window').width;
 
@@ -36,6 +37,7 @@ export class ReadingChapterScreen extends React.Component {
         this.getCurrentPageUrl = this.getCurrentPageUrl.bind(this);
         this.onPressNextPage = this.onPressNextPage.bind(this);
         this.onPressPreviousPage = this.onPressPreviousPage.bind(this);
+        this.onPressMarkAsRead = this.onPressMarkAsRead.bind(this);
     }
 
     componentWillMount() {
@@ -77,6 +79,19 @@ export class ReadingChapterScreen extends React.Component {
         }
     }
 
+    onPressMarkAsRead() {
+        const markAsRead = async (chapter) => {
+            try {
+                await AsyncStorage.setItem(chapter, '1');
+            } catch (error) {
+                // Error retrieving data
+                console.log(error.message);
+            }
+        };
+        markAsRead(this.state.chapter)
+        .then(() => this.props.navigation.navigate('Chapters'));
+    }
+
     render() {
         if (this.props.pagesLoading) {
             return (
@@ -116,7 +131,7 @@ export class ReadingChapterScreen extends React.Component {
 
                         <View style={styles.bottomNavPartView}>
                             {
-                                (this.state.currentPageIndex !== (this.props.pages.length-1)) &&
+                                (this.state.currentPageIndex !== (this.props.pages.length-1)) ?
                                     <TouchableOpacity
                                         style={styles.bottomNavTouchableView}
                                         onPress={() => this.onPressNextPage()} >
@@ -124,6 +139,16 @@ export class ReadingChapterScreen extends React.Component {
                                         <Image
                                             style={styles.bottomNavTouchableImg}
                                             source={rightArrowImg}
+                                            resizeMode="cover"
+                                        />
+                                    </TouchableOpacity>
+                                :
+                                    <TouchableOpacity
+                                        style={styles.bottomNavTouchableView}
+                                        onPress={() => this.onPressMarkAsRead()} >
+                                        <Image
+                                            style={styles.bottomNavTouchableImg}
+                                            source={asReadImg}
                                             resizeMode="cover"
                                         />
                                     </TouchableOpacity>
