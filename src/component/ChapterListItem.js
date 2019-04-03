@@ -14,31 +14,8 @@ export class ChapterListItem extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            isChapterRead: false
-        }
-
         this.onPressItem = this.onPressItem.bind(this);
         this.onLongPressItem = this.onLongPressItem.bind(this);
-    }
-
-    componentWillMount() {
-        const isChapterRead = async () => {
-            let isChapterRead = '0';
-            try {
-                isChapterRead = await AsyncStorage.getItem(this.props.chapter.id) || '0';
-            } catch (error) {
-                // Error retrieving data
-                console.log(error.message);
-            }
-            return isChapterRead;
-        }
-        isChapterRead()
-            .then((isChapterRead) => {
-                this.setState({
-                    isChapterRead: isChapterRead
-                })
-            })
     }
 
     getChapterNumber(chapterName) {
@@ -87,12 +64,12 @@ export class ChapterListItem extends React.Component {
             <TouchableOpacity onPress={this.onPressItem} onLongPress={this.onLongPressItem}>
                 <View style={{
                     ...styles.chapterItemView,
-                    backgroundColor: (this.state.isChapterRead === '1') ? secondaryColor : primaryColor
+                    backgroundColor: (this.props.chapter.isChapterRead === '1') ? secondaryColor : primaryColor
                 }}>
                     <Text 
                         style={{
                             ...styles.chapterItemText,
-                            color: (this.state.isChapterRead === '1') ? primaryColor : tertiaryColor
+                            color: (this.props.chapter.isChapterRead === '1') ? primaryColor : tertiaryColor
                         }}
                     >
                         {this.getChapterNumber(this.props.chapter.id)}
@@ -130,7 +107,8 @@ ChapterListItem.propTypes = {
     manga: PropTypes.string.isRequired,
     chapter: PropTypes.shape({
         id: PropTypes.string.isRequired,
-        number: PropTypes.number.isRequired
+        number: PropTypes.number.isRequired,
+        isChapterRead: PropTypes.string.isRequired
     })
 };
 const mapStateToProps = state => ({
