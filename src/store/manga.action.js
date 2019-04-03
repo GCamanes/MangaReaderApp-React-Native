@@ -39,6 +39,20 @@ export function loadMangas(userMail, userPassword) {
   };
 }
 
+const getChapterNumber = (chapter) => {
+  const number4digits = chapter.split("chap")[1];
+
+  if (number4digits.includes("000")) {
+    return number4digits[3];
+  } else if (number4digits.includes("00")) {
+    return number4digits.substring(2, 4);
+  } else if (number4digits[0] === '0') {
+    return number4digits.substring(1, 4);
+  } else {
+    return number4digits
+  }
+}
+
 export function chaptersLoaded(data) {
   return {
     type: CHAPTERS_LOADED,
@@ -64,13 +78,13 @@ export function loadChapters(userMail, userPassword, manga) {
           } catch (error) {
             console.log(error.message);
           }
-          return isChapterRead;
+          return (isChapterRead === '1');
         }
         var promisesChapter = [];
         data._docs.map((item, index) => {
           promisesChapter.push(
             isChapterRead(item.id)
-              .then((isChapterRead) => { return {id: item.id, number: index + 1, isChapterRead:isChapterRead }})
+              .then((isChapterRead) => { return {id: item.id, number: getChapterNumber(item.id), isChapterRead:isChapterRead }})
           );
         })
         return Promise.all(promisesChapter);
@@ -116,39 +130,27 @@ export function filterChapterList() {
   }
 }
 
+const markAsRead = async (chapter, value) => {
+  try {
+    await AsyncStorage.setItem(chapter, value);
+  } catch (error) {
+    console.log(error.message);
+  }
+  return chapter;
+};
+
 export function chapterMarkedAsRead(data) {
   return {
     type: CHAPTER_MARKED_AS_READ,
-    chapter: data.chapter
+    chapter: data.chapter,
+    isRead: data.isRead
   };
 }
 
-export function markChapterAsRead(chapter, overwrite) {
+export function markChapterAsRead(chapter, value) {
   return (dispatch) => {
     dispatch({ type: MARK_CHAPTER_AS_READ });
-    const isChapterRead = async (chapter) => {
-      let isChapterRead = '0';
-      try {
-        isChapterRead = await AsyncStorage.getItem(chapter) || '0';
-      } catch (error) {
-        console.log(error.message);
-      }
-      return isChapterRead;
-    }
-    const markAsRead = async (chapter, isChapterRead, overwrite) => {
-      try {
-        if (overwrite) {
-          await AsyncStorage.setItem(chapter, (isChapterRead === '1') ? '0' : '1');
-        } else {
-          await AsyncStorage.setItem(chapter, '1');
-        }
-      } catch (error) {
-        console.log(error.message);
-      }
-      return chapter;
-    };
-    return isChapterRead(chapter)
-      .then((isChapterRead) => markAsRead(chapter, isChapterRead, overwrite))
-      .then(() => dispatch(chapterMarkedAsRead({ chapter: chapter })));
+    return markAsRead(chapter, (value) ? '1' : '0')
+      .then(() => dispatch(chapterMarkedAsRead({ chapter: chapter, isRead: value })));
   };
 }

@@ -6,11 +6,10 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native';
-import { AsyncStorage } from 'react-native';
 
 import { loadPages, markChapterAsRead } from '../store/manga.action'
 import { loadImageRatio } from '../store/image.action';
-import { primaryColor, secondaryColor } from '../colors';
+import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 
 import PageView from '../component/PageView';
 import { leftArrowImg, rightArrowImg, asReadImg } from '../images';
@@ -21,7 +20,7 @@ export class ReadingChapterScreen extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         return {
-            title: 'Chapter ' + navigation.getParam('chapterNumber', 'none'),
+            title: 'Chapter ' + navigation.getParam('chapter', 'none').number,
         };
     };
 
@@ -51,7 +50,7 @@ export class ReadingChapterScreen extends React.Component {
     componentDidMount() {
         this.props.loadPages(
             this.props.userMail, this.props.userPassword,
-            this.state.manga, this.state.chapter
+            this.state.manga, this.state.chapter.id
         )
         .then(() => this.props.loadImageRatio(this.props.pages[0].url))
         .catch((error) => (console.log(error)));
@@ -80,7 +79,7 @@ export class ReadingChapterScreen extends React.Component {
     }
 
     onPressMarkAsRead() {
-        this.props.markChapterAsRead(this.state.chapter, false)
+        this.props.markChapterAsRead(this.state.chapter.id, true)
         .then(() => this.props.navigation.navigate('Chapters'));
     }
 
@@ -139,7 +138,7 @@ export class ReadingChapterScreen extends React.Component {
                                         style={styles.bottomNavTouchableView}
                                         onPress={() => this.onPressMarkAsRead()} >
                                         <Image
-                                            style={styles.bottomNavTouchableImg}
+                                            style={styles.markChapterAsReadImg}
                                             source={asReadImg}
                                             resizeMode="cover"
                                         />
@@ -167,8 +166,10 @@ const styles = StyleSheet.create({
     },
     bottomNavView: {
         flex: 1,
-        backgroundColor: secondaryColor,
-        flexDirection: 'row'
+        backgroundColor: tertiaryColor,
+        flexDirection: 'row',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
     },
     bottomNavPartView: {
         flex: 1,
@@ -185,8 +186,12 @@ const styles = StyleSheet.create({
         height: deviceWidth * 0.10,
     },
     bottomNavTouchableText: {
-        color: 'black',
+        color: primaryColor,
         fontSize: 18,
+    },
+    markChapterAsReadImg: {
+        width: deviceWidth * 0.135,
+        height: deviceWidth * 0.135,
     }
 });
 
@@ -209,7 +214,9 @@ ReadingChapterScreen.propTypes = {
     ),
     pagesError: PropTypes.string,
     pagesLoading: PropTypes.bool.isRequired,
-    loadPages: PropTypes.func.isRequired
+    loadPages: PropTypes.func.isRequired,
+
+    markChapterAsRead: PropTypes.func.isRequired,
 };
 const mapStateToProps = state => ({
     connectivity: state.connect.connectivity,
@@ -222,7 +229,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
     loadPages: (userMail, userPassword, manga, chapter) => dispatch(loadPages(userMail, userPassword, manga, chapter)),
-    markChapterAsRead: (chapter, overwrite) => dispatch(markChapterAsRead(chapter, overwrite)),
+    markChapterAsRead: (chapter, value) => dispatch(markChapterAsRead(chapter, value)),
     loadImageRatio: (url) => dispatch(loadImageRatio(url)),
 });
 export default connect(

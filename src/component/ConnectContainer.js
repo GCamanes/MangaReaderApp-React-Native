@@ -7,45 +7,45 @@ import { updateConnectivity } from '../store/connect.action';
 
 
 export class ConnectContainer extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
-    }
+    this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
+  }
 
-    componentDidMount() {
-        NetInfo.isConnected.addEventListener(
-            'connectionChange',
-            this.handleConnectivityChange,
-        );
-    }
+  componentDidMount() {
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleConnectivityChange,
+    );
+  }
 
-    componentWillUnmount() {
-        NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
-    }
+  componentWillUnmount() {
+    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+  }
 
-    handleConnectivityChange(isConnected) {
-        (isConnected ? this.props.updateConnectivity('online') : this.props.updateConnectivity('offline'))
-    }
+  handleConnectivityChange(isConnected) {
+    (isConnected ? this.props.updateConnectivity('online') : this.props.updateConnectivity('offline'))
+  }
 
-    render() {
-        return (
-            <AppContainer />
-        );
-    }
+  render() {
+    return (
+      <AppContainer/>
+    );
+  }
 }
 
 ConnectContainer.propTypes = {
-    updateConnectivity: PropTypes.func.isRequired,
-    connectivity: PropTypes.string.isRequired,
+  updateConnectivity: PropTypes.func.isRequired,
+  connectivity: PropTypes.string.isRequired,
 };
 const mapStateToProps = state => ({
-    connectivity: state.connect.connectivity,
+  connectivity: state.connect.connectivity,
 });
 const mapDispatchToProps = dispatch => ({
-    updateConnectivity: connectivity => dispatch(updateConnectivity(connectivity)),
+  updateConnectivity: connectivity => dispatch(updateConnectivity(connectivity)),
 });
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
+  mapStateToProps,
+  mapDispatchToProps,
 )(ConnectContainer);

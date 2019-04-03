@@ -146,7 +146,8 @@ ChapterListScreen.propTypes = {
     chapters: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.string.isRequired,
-            number: PropTypes.number.isRequired
+            number: PropTypes.string.isRequired,
+            isChapterRead: PropTypes.bool.isRequired
         })
     ),
     chaptersError: PropTypes.string,

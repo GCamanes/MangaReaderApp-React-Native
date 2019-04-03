@@ -42,7 +42,6 @@ export function mangaReducer(state = initialState, action) {
             };
         }
         case CHAPTERS_LOADED: {
-            console.log(action.chapters)
             return {
                 ...state,
                 chapters: (action.chapters) ? action.chapters : [],
@@ -82,9 +81,17 @@ export function mangaReducer(state = initialState, action) {
             }
         }
         case CHAPTER_MARKED_AS_READ: {
+
+            const chapter = state.chapters.find((item) => item.id === action.chapter);
+            chapter.isChapterRead = action.isRead;
+            const others = state.chapters.filter((item) => item.id !== action.chapter);
             return {
                 ...state,
-                chapterMarkingAsRead: true,
+                chapters: (state.chaptersListFilter === 'down') ?
+                  [...others, chapter].sort((a, b) => b.number - a.number)
+                  :
+                  [...others, chapter].sort((a, b) => a.number - b.number),
+                chapterMarkingAsRead: false,
                 chaptersListNeedRefresh: !state.chaptersListNeedRefresh
 
             };
