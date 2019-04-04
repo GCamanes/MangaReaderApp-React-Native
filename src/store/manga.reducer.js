@@ -81,7 +81,6 @@ export function mangaReducer(state = initialState, action) {
             }
         }
         case CHAPTER_MARKED_AS_READ: {
-
             const chapter = state.chapters.find((item) => item.id === action.chapter);
             chapter.isChapterRead = action.isRead;
             const others = state.chapters.filter((item) => item.id !== action.chapter);

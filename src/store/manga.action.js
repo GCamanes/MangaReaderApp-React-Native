@@ -42,16 +42,16 @@ export function loadMangas(userMail, userPassword) {
 const getChapterNumber = (chapter) => {
   const number4digits = chapter.split("chap")[1];
 
-  if (number4digits.includes("000")) {
+  if (number4digits.substring(0, 3) === "000") {
     return number4digits[3];
-  } else if (number4digits.includes("00")) {
+  } else if (number4digits.substring(0, 2) === "00") {
     return number4digits.substring(2, 4);
   } else if (number4digits[0] === '0') {
     return number4digits.substring(1, 4);
   } else {
     return number4digits
   }
-}
+};
 
 export function chaptersLoaded(data) {
   return {
@@ -59,7 +59,7 @@ export function chaptersLoaded(data) {
     chapters: data.chapters,
     error: data.error,
   };
-}
+};
 
 export function loadChapters(userMail, userPassword, manga) {
   return (dispatch) => {
@@ -79,14 +79,14 @@ export function loadChapters(userMail, userPassword, manga) {
             console.log(error.message);
           }
           return (isChapterRead === '1');
-        }
+        };
         var promisesChapter = [];
-        data._docs.map((item, index) => {
+        data._docs.map((item) => {
           promisesChapter.push(
             isChapterRead(item.id)
               .then((isChapterRead) => { return {id: item.id, number: getChapterNumber(item.id), isChapterRead:isChapterRead }})
           );
-        })
+        });
         return Promise.all(promisesChapter);
       })
       .then((data) => dispatch(chaptersLoaded({ chapters: data.sort((a, b) => b.number - a.number) })))

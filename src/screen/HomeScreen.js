@@ -10,9 +10,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { MangaListItem } from '../component/MangaListItem';
-import LogoutButton from '../component/LogoutButton'
+import LogoutButton from '../component/LogoutButton';
+import { SearchBar } from '../component/SearchBar';
 import { primaryColor, secondaryColor } from '../colors';
-
 
 import { loadMangas } from '../store/manga.action';
 
@@ -27,6 +27,10 @@ class HomeScreen extends Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      search: '',
+    };
   }
 
   componentDidMount() {
@@ -51,6 +55,11 @@ class HomeScreen extends Component {
     return true;
   }
 
+  updateSearch = search => {
+    console.log(search);
+    this.setState({ search });
+  };
+
   onPressItem = (item) => {
     if (this.props.connectivity) {
       this.props.navigation.navigate('Chapters', {
@@ -59,7 +68,7 @@ class HomeScreen extends Component {
     } else {
       Alert.alert('Warning', 'No internet connection.');
     }
-  }
+  };
 
   renderSeparator = () => {
     return (
@@ -83,8 +92,12 @@ class HomeScreen extends Component {
     }
     return (
       <View style={{ flex: 1, backgroundColor: primaryColor }}>
+        <SearchBar
+          onSearchChange={this.updateSearch}
+          value={this.state.search}
+        />
         <FlatList
-          data={this.props.mangas}
+          data={this.props.mangas.filter((item) => item.includes(this.state.search))}
           keyExtractor={item => item}
           ItemSeparatorComponent={this.renderSeparator}
           renderItem={({ item }) => {

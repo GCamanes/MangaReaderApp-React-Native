@@ -17,7 +17,7 @@ export class LoginScreen extends Component {
   static navigationOptions = {
     title: 'Login',
     header: null
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -44,7 +44,7 @@ export class LoginScreen extends Component {
         console.log(error.message);
       }
       return { userMail: userMail, userPassword: userPassword };
-    }
+    };
     getUserInfos()
       .then((userInfos) => {
         this.setState({
@@ -57,7 +57,7 @@ export class LoginScreen extends Component {
 
   onToggleSwitchRememberMe = (value) => {
     this.setState({ userRemember: value });
-  }
+  };
 
   onLogin() {
     const { userMail, userPassword, userRemember } = this.state;
@@ -89,15 +89,19 @@ export class LoginScreen extends Component {
           value={this.state.userMail}
           onChangeText={(userMail) => this.setState({ userMail })}
           placeholder={'Mail'}
+          selectionColor={secondaryColor}
           keyboardType='email-address'
           style={styles.input}
+          autoCapitalize = 'none'
         />
         <TextInput
           value={this.state.userPassword}
           onChangeText={(userPassword) => this.setState({ userPassword })}
           placeholder={'Password'}
+          selectionColor={secondaryColor}
           secureTextEntry={true}
           style={styles.input}
+          autoCapitalize = 'none'
         />
         <View style={styles.rememberUserView}>
           <Text style={styles.rememberUserText}>Remember me ?</Text>
@@ -140,13 +144,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   input: {
-    width: deviceWidth * 0.7,
+    width: deviceWidth * 0.9,
     height: 44,
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: secondaryColor,
+    paddingStart: 10,
     marginBottom: 10,
+    color: secondaryColor,
+    backgroundColor: primaryColor,
+    borderColor: secondaryColor,
+    borderRadius: 10,
+    borderWidth: 2,
+    fontSize: 20,
   },
   rememberUserView: {
     width: deviceWidth * 0.7,
@@ -174,7 +181,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold'
   }
-
 });
 
 LoginScreen.propTypes = {

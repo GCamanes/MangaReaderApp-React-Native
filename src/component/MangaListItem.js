@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { primaryColor } from '../colors';
 
-let deviceWidth = Dimensions.get('window').width
+let deviceWidth = Dimensions.get('window').width;
 
 export class MangaListItem extends React.Component {
   constructor(props) {
@@ -11,7 +11,7 @@ export class MangaListItem extends React.Component {
 
   render() {
     return (
-      <View style={styles.MangaItemView}>
+      <View style={styles.mangaItemView}>
         <Text style={styles.mangaText}>{this.props.manga}</Text>
       </View>
     );
@@ -19,10 +19,10 @@ export class MangaListItem extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  MangaItemView: {
+  mangaItemView: {
     backgroundColor: primaryColor,
     justifyContent: 'center',
-    height: 50,
+    height: deviceWidth*0.15,
     width: deviceWidth
   },
   mangaText: {
