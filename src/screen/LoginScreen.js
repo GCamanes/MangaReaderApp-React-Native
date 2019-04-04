@@ -108,6 +108,8 @@ export class LoginScreen extends Component {
           <Switch
             onValueChange={this.onToggleSwitchRememberMe}
             value={this.state.userRemember}
+            trackColor={{true: secondaryColor}}
+            thumbColor={tertiaryColor}
           />
         </View>
         {
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
     height: 44,
     paddingStart: 10,
     marginBottom: 10,
-    color: secondaryColor,
+    color: tertiaryColor,
     backgroundColor: primaryColor,
     borderColor: secondaryColor,
     borderRadius: 10,

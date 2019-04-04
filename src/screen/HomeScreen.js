@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { MangaListItem } from '../component/MangaListItem';
 import LogoutButton from '../component/LogoutButton';
 import { SearchBar } from '../component/SearchBar';
-import { primaryColor, secondaryColor } from '../colors';
+import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 
 import { loadMangas } from '../store/manga.action';
 
@@ -31,6 +31,8 @@ class HomeScreen extends Component {
     this.state = {
       search: '',
     };
+
+    this.onCancelSearch = this.onCancelSearch.bind(this);
   }
 
   componentDidMount() {
@@ -55,10 +57,13 @@ class HomeScreen extends Component {
     return true;
   }
 
-  updateSearch = search => {
-    console.log(search);
+  onSearchChange = search => {
     this.setState({ search });
   };
+
+  onCancelSearch() {
+    this.setState({ search: '' });
+  }
 
   onPressItem = (item) => {
     if (this.props.connectivity) {
@@ -92,10 +97,13 @@ class HomeScreen extends Component {
     }
     return (
       <View style={{ flex: 1, backgroundColor: primaryColor }}>
+        <View style={{ height: 1, width: deviceWidth, backgroundColor: tertiaryColor }}/>
         <SearchBar
-          onSearchChange={this.updateSearch}
+          onSearchChange={this.onSearchChange}
+          onCancelSearch={this.onCancelSearch}
           value={this.state.search}
         />
+        <View style={{ height: 1, width: deviceWidth, backgroundColor: tertiaryColor }}/>
         <FlatList
           data={this.props.mangas.filter((item) => item.includes(this.state.search))}
           keyExtractor={item => item}

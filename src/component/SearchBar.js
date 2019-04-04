@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TextInput, View, Dimensions, Image } from 'react-native';
+import { StyleSheet, TextInput, View, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 import { searchImg, deleteImg } from '../images';
 
@@ -18,12 +18,14 @@ export class SearchBar extends React.Component {
           <TextInput
             style={styles.searchTextInput}
             onChangeText={(text) => this.props.onSearchChange(text)}
-            value={this.props.search}
+            value={this.props.value}
             placeholder={'search manga by name...'}
             selectionColor={secondaryColor}
             autoCapitalize = 'none'
           />
-          <Image style={styles.image} source={deleteImg}/>
+          <TouchableOpacity onPress={() => this.props.onCancelSearch()}>
+            <Image style={styles.image} source={deleteImg}/>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: deviceWidth * 0.98,
+    width: deviceWidth * 0.97,
     height: deviceWidth*0.12,
     borderRadius: 10,
     backgroundColor: primaryColor,
@@ -57,7 +59,7 @@ const styles = StyleSheet.create({
     color: secondaryColor,
   },
   image: {
-    height: deviceWidth * 0.06,
-    width: deviceWidth * 0.06,
+    height: deviceWidth * 0.07,
+    width: deviceWidth * 0.07,
   },
 });
