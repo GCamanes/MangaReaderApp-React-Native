@@ -3,10 +3,13 @@ import {
 } from './image.action';
 
 export const initialState = {
-  ratioLoading: true,
-  ratioLoaded: false,
-  url: '',
-  ratio: 1,
+  imgRatioLoading: true,
+  imgUrl: '',
+  imgRatioWH: 1,
+  imgRatioHW: 1,
+  imgHeight: 150,
+  imgWidth: 100,
+  imgError: undefined
 };
 
 export function imageReducer(state = initialState, action) {
@@ -14,17 +17,19 @@ export function imageReducer(state = initialState, action) {
     case IMAGE_RATIO_LOADED: {
       return {
         ...state,
-        ratio: action.ratio,
-        ratioLoading: false,
-        ratioLoaded: true,
+        imgRatioHW: action.imgRatioHW,
+        imgRatioWH: action.imgRatioWH,
+        imgHeight: action.imgHeight,
+        imgWidth: action.imgWidth,
+        imgRatioLoading: false,
+        imgError: action.imgError
       };
     }
     case LOAD_IMAGE_RATIO: {
       return {
         ...state,
-        url: action.url,
-        ratioLoading: true,
-        ratioLoaded: false,
+        imgUrl: action.imgUrl,
+        imgRatioLoading: true,
       };
     }
     default:

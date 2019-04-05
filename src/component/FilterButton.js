@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  TouchableOpacity, Image, StyleSheet, Alert
+  TouchableOpacity, Image, StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -22,7 +22,6 @@ export class FilterButton extends Component {
   }
 
   onFilterPress() {
-    console.log('filter press');
     this.props.filterChapterList();
   }
 

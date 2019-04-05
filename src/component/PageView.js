@@ -1,5 +1,8 @@
 import React from 'react';
-import { StyleSheet, Image, View, Dimensions, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet, Image, View, ActivityIndicator,
+  Dimensions,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -10,16 +13,28 @@ let deviceWidth = Dimensions.get('window').width;
 export class PageView extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      pageViewHeight: props.pageViewHeight
+    };
   }
 
   render() {
-    if (this.props.ratioLoading) {
+    if (this.props.imgRatioLoading) {
       return (
         <View style={styles.pageItemView}>
           <ActivityIndicator size="large" color="green"/>
         </View>
       );
     }
+    if (this.props.imgError) {
+      return (
+        <View style={styles.pageItemView}>
+          <Text>error when loading img from {this.props.imgUrl}</Text>
+        </View>
+      );
+    }
+
     return (
       <ReactNativeZoomableView
         maxZoom={2.0}
@@ -32,10 +47,14 @@ export class PageView extends React.Component {
       >
         <Image
           style={{
-            width: (deviceWidth * ((this.props.ratio > 1.5) ? ((this.props.ratio > 1.55) ? 0.85 : 0.9) : 0.95)),
-            height: (deviceWidth * ((this.props.ratio > 1.5) ? ((this.props.ratio > 1.55) ? 0.85 : 0.9) : 0.95)) * this.props.ratio,
+            width: (this.props.imgRatioHW < 1) ?
+              (deviceWidth * 0.95) :
+              ((this.state.pageViewHeight * 0.95) * this.props.imgRatioWH),
+            height: (this.props.imgRatioHW < 1) ?
+              ((deviceWidth * 0.95) * this.props.imgRatioHW) :
+              (this.state.pageViewHeight * 0.95),
           }}
-          source={{ uri: this.props.url }}
+          source={{ uri: this.props.imgUrl }}
         />
       </ReactNativeZoomableView>
     );
@@ -52,19 +71,26 @@ const styles = StyleSheet.create({
 
 PageView.propTypes = {
   connectivity: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
-  ratio: PropTypes.number.isRequired,
-  ratioLoading: PropTypes.bool.isRequired,
+  imgUrl: PropTypes.string.isRequired,
+  imgRatioHW: PropTypes.number.isRequired,
+  imgRatioWH: PropTypes.number.isRequired,
+  imgHeight: PropTypes.number.isRequired,
+  imgWidth: PropTypes.number.isRequired,
+  imgRatioLoading: PropTypes.bool.isRequired,
+  imgError: PropTypes.string,
 };
 const mapStateToProps = state => ({
   connectivity: state.connect.connectivity,
-  url: state.image.url,
-  ratio: state.image.ratio,
-  ratioLoading: state.image.ratioLoading,
-  ratioLoaded: state.image.ratioLoaded,
+  imgUrl: state.image.imgUrl,
+  imgRatioHW: state.image.imgRatioHW,
+  imgRatioWH: state.image.imgRatioWH,
+  imgHeight: state.image.imgHeight,
+  imgWidth: state.image.imgWidth,
+  imgRatioLoading: state.image.imgRatioLoading,
+  imgError: state.image.imgError,
 });
-const mapDispatchToProps = dispatch => ({});
+
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  null,
 )(PageView);

@@ -23,7 +23,6 @@ export function connectReducer(state = initialState, action) {
     }
     case USER_LOGGEDIN: {
       if (action.userRemember && action.userMail && action.userPassword) {
-        console.log("saving user infos");
         AsyncStorage.setItem('userMail', action.userMail);
         AsyncStorage.setItem('userPassword', action.userPassword);
       } else {

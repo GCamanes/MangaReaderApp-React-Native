@@ -22,6 +22,7 @@ export class ChapterListScreen extends React.Component {
     return {
       title: navigation.getParam('manga', 'none'),
       headerRight: <FilterButton/>,
+      headerStyle: { backgroundColor: secondaryColor },
     };
   };
 

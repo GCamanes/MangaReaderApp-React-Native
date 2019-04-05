@@ -14,6 +14,7 @@ import LogoutButton from '../component/LogoutButton';
 import { SearchBar } from '../component/SearchBar';
 import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 
+import { logoutUser } from '../store/connect.action';
 import { loadMangas } from '../store/manga.action';
 
 let deviceWidth = Dimensions.get('window').width;
@@ -23,6 +24,7 @@ class HomeScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
     headerTitle: 'Manga list',
     headerLeft: <LogoutButton navigation={navigation}/>,
+    headerStyle: { backgroundColor: secondaryColor },
   });
 
   constructor(props) {
@@ -144,7 +146,9 @@ HomeScreen.propTypes = {
   ),
   mangasError: PropTypes.string,
   mangasLoading: PropTypes.bool.isRequired,
-  loadMangas: PropTypes.func.isRequired
+  loadMangas: PropTypes.func.isRequired,
+
+  logoutUser: PropTypes.func.isRequired,
 };
 const mapStateToProps = state => ({
   connectivity: state.connect.connectivity,
@@ -157,6 +161,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   loadMangas: (userMail, userPassword) => dispatch(loadMangas(userMail, userPassword)),
+  logoutUser: () => dispatch(logoutUser()),
 });
 export default connect(
   mapStateToProps,

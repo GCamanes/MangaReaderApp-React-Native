@@ -1,11 +1,13 @@
 import React from 'react';
 import {
     StyleSheet, Text, View, TouchableOpacity, Image,
-    ActivityIndicator, Alert
+    ActivityIndicator, Alert, Platform,
+
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native';
+import { Header } from 'react-navigation';
 
 import { loadPages, markChapterAsRead } from '../store/manga.action'
 import { loadImageRatio } from '../store/image.action';
@@ -15,12 +17,19 @@ import PageView from '../component/PageView';
 import { leftArrowImg, rightArrowImg, asReadImg } from '../images';
 
 let deviceWidth = Dimensions.get('window').width;
+let deviceHeight = Dimensions.get('window').height;
+let headerHeight = Header.HEIGHT;
+
+let availableHeight = (deviceHeight*(Platform.OS === 'ios' ? 1 : 0.96)) - headerHeight;
+let pageViewHeight = availableHeight * 0.9;
+let bottomNavViewHeight = availableHeight * 0.1;
 
 export class ReadingChapterScreen extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Chapter ' + navigation.getParam('chapter', 'none').number,
+            headerStyle: { backgroundColor: secondaryColor },
         };
     };
 
@@ -48,12 +57,16 @@ export class ReadingChapterScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.props.loadPages(
-            this.props.userMail, this.props.userPassword,
-            this.state.manga, this.state.chapter.id
-        )
-        .then(() => this.props.loadImageRatio(this.props.pages[0].url))
-        .catch((error) => (console.log(error)));
+        if (this.props.connectivity) {
+            this.props.loadPages(
+                this.props.userMail, this.props.userPassword,
+                this.state.manga, this.state.chapter.id
+            )
+            .then(() => this.props.loadImageRatio(this.props.pages[0].url))
+            .catch((error) => (console.log(error)));
+        } else {
+            Alert.alert('Warning', 'No internet connection.');
+        }
     }
 
     getCurrentPageUrl() {
@@ -93,8 +106,8 @@ export class ReadingChapterScreen extends React.Component {
         } else {
             return (
                 <View style={styles.readingChapterView}>
-                    <View style={{flex: 10}}>
-                        <PageView/>
+                    <View style={{height: pageViewHeight, width: deviceWidth,}}>
+                        <PageView pageViewHeight={pageViewHeight}/>
                     </View>
                     
                     <View style={styles.bottomNavView}>
@@ -165,7 +178,8 @@ const styles = StyleSheet.create({
         flexDirection: 'column'
     },
     bottomNavView: {
-        flex: 1,
+        height: bottomNavViewHeight,
+        width: deviceWidth,
         backgroundColor: tertiaryColor,
         flexDirection: 'row',
         borderTopLeftRadius: 20,
@@ -182,16 +196,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',justifyContent: 'center'
     },
     bottomNavTouchableImg: {
-        width: deviceWidth * 0.10,
-        height: deviceWidth * 0.10,
+        width: bottomNavViewHeight * 0.8,
+        height: bottomNavViewHeight * 0.8,
     },
     bottomNavTouchableText: {
         color: primaryColor,
         fontSize: 18,
     },
     markChapterAsReadImg: {
-        width: deviceWidth * 0.135,
-        height: deviceWidth * 0.135,
+        width: bottomNavViewHeight * 0.95,
+        height: bottomNavViewHeight * 0.95,
     }
 });
 
