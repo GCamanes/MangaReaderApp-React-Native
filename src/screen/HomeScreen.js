@@ -3,7 +3,7 @@ import {
   View, StyleSheet,
   TouchableOpacity, FlatList,
   ActivityIndicator, Alert,
-  BackHandler, StatusBar, Platform,
+  BackHandler,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -31,6 +31,7 @@ class HomeScreen extends Component {
     };
 
     this.onCancelSearch = this.onCancelSearch.bind(this);
+    this.handleBackButton = this.handleBackButton.bind(this);
   }
 
   componentDidMount() {
@@ -52,6 +53,15 @@ class HomeScreen extends Component {
   }
 
   handleBackButton() {
+    Alert.alert(
+      'Warning',
+      'Do you want to logout ?',
+      [
+        { text: 'NO', sytle: 'cancel' },
+        { text: 'YES', onPress: () => this.onDisconnectPress() },
+
+      ],
+    );
     return true;
   }
 
@@ -73,6 +83,11 @@ class HomeScreen extends Component {
     }
   };
 
+  onDisconnectPress() {
+    this.props.logoutUser();
+    this.props.navigation.goBack();
+  }
+
   renderSeparator = () => {
     return (
       <View
@@ -89,18 +104,12 @@ class HomeScreen extends Component {
     if (this.props.mangasLoading) {
       return (
         <View style={styles.loadingView}>
-          {(Platform.OS !== 'ios') && (
-            <StatusBar hidden={true} />
-          )}
           <ActivityIndicator size="large" color={secondaryColor}/>
         </View>
       );
     }
     return (
       <View style={{ flex: 1, backgroundColor: primaryColor }}>
-        {(Platform.OS !== 'ios') && (
-          <StatusBar hidden={true} />
-        )}
         <View style={{ height: 1, width: deviceSize.deviceWidth, backgroundColor: tertiaryColor }}/>
         <SearchBar
           onSearchChange={this.onSearchChange}

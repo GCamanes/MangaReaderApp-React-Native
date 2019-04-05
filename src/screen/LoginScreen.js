@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {
   Alert, TouchableOpacity, TextInput,
-  View, StyleSheet, ActivityIndicator, Text, Switch
+  View, StyleSheet, ActivityIndicator, Text, Switch,
+  StatusBar, Platform, BackHandler,
 } from 'react-native';
 import { AsyncStorage } from 'react-native';
 import PropTypes from 'prop-types';
@@ -27,6 +28,7 @@ export class LoginScreen extends Component {
 
     this.onToggleSwitchRememberMe = this.onToggleSwitchRememberMe.bind(this);
     this.onLogin = this.onLogin.bind(this);
+    this.handleBackButton = this.handleBackButton.bind(this);
   }
 
   componentWillMount() {
@@ -51,6 +53,19 @@ export class LoginScreen extends Component {
         })
       })
   }
+
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  handleBackButton() {
+    return false;
+  }
+
 
   onToggleSwitchRememberMe = (value) => {
     this.setState({ userRemember: value });
@@ -80,6 +95,9 @@ export class LoginScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {(Platform.OS !== 'ios') && (
+          <StatusBar hidden={true} />
+        )}
         <Text style={styles.welcomeText}>Welcome to</Text>
         <Text style={{ ...styles.welcomeText, marginBottom: 20 }}>Manga Reader App !</Text>
         <TextInput

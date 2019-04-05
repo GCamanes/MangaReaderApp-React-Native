@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   StyleSheet, Text, View, FlatList,
-  ActivityIndicator, Alert
+  ActivityIndicator, Alert, BackHandler
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -27,6 +27,8 @@ export class ChapterListScreen extends React.Component {
     this.state = {
       manga: null,
     };
+
+    this.handleBackButton = this.handleBackButton.bind(this);
   }
 
   componentWillMount() {
@@ -37,6 +39,7 @@ export class ChapterListScreen extends React.Component {
   }
 
   componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     if (this.props.connectivity) {
       this.props.loadChapters(this.props.userMail, this.props.userPassword, this.state.manga)
         .then(() => {
@@ -47,6 +50,14 @@ export class ChapterListScreen extends React.Component {
     } else {
       Alert.alert('Warning', 'No internet connection.');
     }
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  handleBackButton() {
+    return true;
   }
 
   render() {
