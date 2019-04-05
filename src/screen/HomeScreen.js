@@ -1,23 +1,19 @@
 import React, { Component } from 'react';
 import {
   View, StyleSheet,
-  Dimensions,
   TouchableOpacity, FlatList,
   ActivityIndicator, Alert,
-  BackHandler
+  BackHandler, StatusBar, Platform,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
 import { MangaListItem } from '../component/MangaListItem';
 import LogoutButton from '../component/LogoutButton';
 import { SearchBar } from '../component/SearchBar';
 import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
-
 import { logoutUser } from '../store/connect.action';
 import { loadMangas } from '../store/manga.action';
-
-let deviceWidth = Dimensions.get('window').width;
+import { deviceSize} from '../size';
 
 class HomeScreen extends Component {
 
@@ -82,7 +78,7 @@ class HomeScreen extends Component {
       <View
         style={{
           height: 1,
-          width: deviceWidth,
+          width: deviceSize.deviceWidth,
           backgroundColor: secondaryColor,
         }}
       />
@@ -93,19 +89,25 @@ class HomeScreen extends Component {
     if (this.props.mangasLoading) {
       return (
         <View style={styles.loadingView}>
+          {(Platform.OS !== 'ios') && (
+            <StatusBar hidden={true} />
+          )}
           <ActivityIndicator size="large" color={secondaryColor}/>
         </View>
       );
     }
     return (
       <View style={{ flex: 1, backgroundColor: primaryColor }}>
-        <View style={{ height: 1, width: deviceWidth, backgroundColor: tertiaryColor }}/>
+        {(Platform.OS !== 'ios') && (
+          <StatusBar hidden={true} />
+        )}
+        <View style={{ height: 1, width: deviceSize.deviceWidth, backgroundColor: tertiaryColor }}/>
         <SearchBar
           onSearchChange={this.onSearchChange}
           onCancelSearch={this.onCancelSearch}
           value={this.state.search}
         />
-        <View style={{ height: 1, width: deviceWidth, backgroundColor: tertiaryColor }}/>
+        <View style={{ height: 1, width: deviceSize.deviceWidth, backgroundColor: tertiaryColor }}/>
         <FlatList
           data={this.props.mangas.filter((item) => item.includes(this.state.search))}
           keyExtractor={item => item}

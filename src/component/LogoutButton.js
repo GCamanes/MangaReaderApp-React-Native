@@ -5,7 +5,6 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { logoutUser } from '../store/connect.action';
-
 import { logoutImg } from '../images';
 
 const styles = StyleSheet.create({

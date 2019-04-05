@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
 import {
-  Alert, TouchableOpacity, TextInput, Dimensions,
+  Alert, TouchableOpacity, TextInput,
   View, StyleSheet, ActivityIndicator, Text, Switch
 } from 'react-native';
 import { AsyncStorage } from 'react-native';
-
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser } from '../store/connect.action';
-
 import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
-
-let deviceWidth = Dimensions.get('window').width;
+import { deviceSize} from '../size';
 
 export class LoginScreen extends Component {
   static navigationOptions = {
@@ -146,7 +143,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   input: {
-    width: deviceWidth * 0.9,
+    width: deviceSize.deviceWidth * 0.9,
     height: 44,
     paddingStart: 10,
     marginBottom: 10,
@@ -158,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   rememberUserView: {
-    width: deviceWidth * 0.7,
+    width: deviceSize.deviceWidth * 0.7,
     height: 30,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -170,7 +167,7 @@ const styles = StyleSheet.create({
     marginEnd: 10
   },
   touchableLogin: {
-    width: deviceWidth * 0.7,
+    width: deviceSize.deviceWidth * 0.7,
     height: 40,
     borderRadius: 20,
     marginTop: 15,

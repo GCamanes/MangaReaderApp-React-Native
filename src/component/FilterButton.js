@@ -5,7 +5,6 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { filterChapterList } from '../store/manga.action';
-
 import { filterListDownImg, filterListUpImg } from '../images';
 
 const styles = StyleSheet.create({

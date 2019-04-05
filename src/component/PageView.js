@@ -1,14 +1,11 @@
 import React from 'react';
 import {
   StyleSheet, Image, View, ActivityIndicator,
-  Dimensions,
 } from 'react-native';
+import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
-import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
-
-let deviceWidth = Dimensions.get('window').width;
+import { deviceSize} from '../size';
 
 export class PageView extends React.Component {
   constructor(props) {
@@ -48,10 +45,10 @@ export class PageView extends React.Component {
         <Image
           style={{
             width: (this.props.imgRatioHW < 1) ?
-              (deviceWidth * 0.95) :
+              (deviceSize.deviceWidth * 0.95) :
               ((this.state.pageViewHeight * 0.95) * this.props.imgRatioWH),
             height: (this.props.imgRatioHW < 1) ?
-              ((deviceWidth * 0.95) * this.props.imgRatioHW) :
+              ((deviceSize.deviceWidth * 0.95) * this.props.imgRatioHW) :
               (this.state.pageViewHeight * 0.95),
           }}
           source={{ uri: this.props.imgUrl }}

@@ -1,9 +1,8 @@
 import React from 'react';
-import { StyleSheet, TextInput, View, Dimensions, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, TextInput, View, TouchableOpacity, Image } from 'react-native';
 import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 import { searchImg, deleteImg } from '../images';
-
-let deviceWidth = Dimensions.get('window').width;
+import { deviceSize} from '../size';
 
 export class SearchBar extends React.Component {
   constructor(props) {
@@ -34,7 +33,7 @@ export class SearchBar extends React.Component {
 
 const styles = StyleSheet.create({
   searchBarView: {
-    height: deviceWidth*0.15,
+    height: deviceSize.deviceWidth*0.15,
     backgroundColor: secondaryColor,
     alignItems: 'center',
     justifyContent: 'center',
@@ -43,23 +42,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: deviceWidth * 0.97,
-    height: deviceWidth*0.12,
+    width: deviceSize.deviceWidth * 0.97,
+    height: deviceSize.deviceWidth*0.12,
     borderRadius: 10,
     backgroundColor: primaryColor,
     borderColor: tertiaryColor,
     borderWidth: 2,
   },
   searchTextInput: {
-    height: deviceWidth * 0.12,
-    width: deviceWidth * 0.80,
+    height: deviceSize.deviceWidth * 0.12,
+    width: deviceSize.deviceWidth * 0.80,
 
     paddingStart: 10,
     fontSize: 20,
     color: secondaryColor,
   },
   image: {
-    height: deviceWidth * 0.07,
-    width: deviceWidth * 0.07,
+    height: deviceSize.deviceWidth * 0.07,
+    width: deviceSize.deviceWidth * 0.07,
   },
 });

@@ -1,26 +1,21 @@
 import React from 'react';
 import {
     StyleSheet, Text, View, TouchableOpacity, Image,
-    ActivityIndicator, Alert, Platform,
-
+    ActivityIndicator, Alert,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Dimensions } from 'react-native';
 import { Header } from 'react-navigation';
-
 import { loadPages, markChapterAsRead } from '../store/manga.action'
 import { loadImageRatio } from '../store/image.action';
 import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
-
 import PageView from '../component/PageView';
 import { leftArrowImg, rightArrowImg, asReadImg } from '../images';
+import { deviceSize} from '../size';
 
-let deviceWidth = Dimensions.get('window').width;
-let deviceHeight = Dimensions.get('window').height;
 let headerHeight = Header.HEIGHT;
 
-let availableHeight = (deviceHeight*(Platform.OS === 'ios' ? 1 : 0.96)) - headerHeight;
+let availableHeight = deviceSize.deviceHeight - headerHeight;
 let pageViewHeight = availableHeight * 0.9;
 let bottomNavViewHeight = availableHeight * 0.1;
 
@@ -106,7 +101,7 @@ export class ReadingChapterScreen extends React.Component {
         } else {
             return (
                 <View style={styles.readingChapterView}>
-                    <View style={{height: pageViewHeight, width: deviceWidth,}}>
+                    <View style={{height: pageViewHeight, width: deviceSize.deviceWidth,}}>
                         <PageView pageViewHeight={pageViewHeight}/>
                     </View>
                     
@@ -179,7 +174,7 @@ const styles = StyleSheet.create({
     },
     bottomNavView: {
         height: bottomNavViewHeight,
-        width: deviceWidth,
+        width: deviceSize.deviceWidth,
         backgroundColor: tertiaryColor,
         flexDirection: 'row',
         borderTopLeftRadius: 20,

@@ -5,16 +5,11 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Dimensions } from 'react-native';
-
 import ChapterListItem from '../component/ChapterListItem';
-
 import { loadChapters } from '../store/manga.action';
-
 import { primaryColor, secondaryColor } from '../colors';
 import FilterButton from '../component/FilterButton';
-
-let deviceWidth = Dimensions.get('window').width;
+import { deviceSize} from '../size';
 
 export class ChapterListScreen extends React.Component {
 
@@ -107,8 +102,8 @@ const styles = StyleSheet.create({
     backgroundColor: primaryColor,
   },
   chapterFilterView: {
-    height: deviceWidth * 0.15,
-    width: deviceWidth,
+    height: deviceSize.deviceWidth * 0.15,
+    width: deviceSize.deviceWidth,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row'
@@ -119,8 +114,8 @@ const styles = StyleSheet.create({
     color: 'black'
   },
   chapterFilterImage: {
-    width: deviceWidth * 0.1,
-    height: deviceWidth * 0.1,
+    width: deviceSize.deviceWidth * 0.1,
+    height: deviceSize.deviceWidth * 0.1,
     marginEnd: 10
   }
 });

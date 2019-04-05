@@ -1,15 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
-import { AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { markChapterAsRead } from "../store/manga.action";
-
-let deviceWidth = Dimensions.get('window').width;
-
+import { deviceSize} from '../size';
 
 export class ChapterListItem extends React.Component {
   constructor(props) {
@@ -64,8 +61,8 @@ const styles = StyleSheet.create({
     backgroundColor: secondaryColor,
     alignItems: 'center',
     justifyContent: 'center',
-    width: deviceWidth * 0.24,
-    height: deviceWidth * 0.15,
+    width: deviceSize.deviceWidth * 0.24,
+    height: deviceSize.deviceWidth * 0.15,
     borderRadius: 8,
     borderWidth: 2,
     borderColor: tertiaryColor,

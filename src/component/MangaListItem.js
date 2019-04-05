@@ -1,8 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { primaryColor } from '../colors';
-
-let deviceWidth = Dimensions.get('window').width;
+import { deviceSize} from '../size';
 
 export class MangaListItem extends React.Component {
   constructor(props) {
@@ -22,8 +21,8 @@ const styles = StyleSheet.create({
   mangaItemView: {
     backgroundColor: primaryColor,
     justifyContent: 'center',
-    height: deviceWidth*0.15,
-    width: deviceWidth
+    height: deviceSize.deviceWidth*0.15,
+    width: deviceSize.deviceWidth
   },
   mangaText: {
     fontSize: 20,
