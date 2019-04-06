@@ -28,16 +28,13 @@ export class ChapterListItem extends React.Component {
   }
 
   onLongPressItem() {
-    if (this.props.chapter.isChapterRead) {
-      this.props.markChapterAsRead(this.props.chapter.id, false);
-    } else {
-      this.props.markChapterAsRead(this.props.chapter.id, true);
-    }
+    const { id, isChapterRead } = this.props.chapter;
+    this.props.markChapterAsRead(id, !isChapterRead);
   }
 
   render() {
     return (
-      <TouchableOpacity onPress={this.onPressItem} onLongPress={this.onLongPressItem}>
+      <TouchableOpacity onPress={this.onPressItem} onLongPress={this.onLongPressItem} delayLongPress={500}>
         <View style={{
           ...styles.chapterItemView,
           backgroundColor: (this.props.chapter.isChapterRead) ? secondaryColor : primaryColor

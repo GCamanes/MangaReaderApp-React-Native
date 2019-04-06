@@ -91,8 +91,10 @@ export class ChapterListScreen extends React.Component {
           onEndReachedThreshold={30}
           renderItem={({ item }) => {
             return (
-              <ChapterListItem manga={this.state.manga} chapter={item}
-                               navigation={this.props.navigation}/>
+              <ChapterListItem 
+                manga={this.state.manga} chapter={item}
+                navigation={this.props.navigation}
+              />
             )
           }}
         />

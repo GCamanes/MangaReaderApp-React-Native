@@ -3,17 +3,17 @@ import { AsyncStorage } from "react-native";
 
 export const MANGAS_LOADED = 'MANGAS_LOADED';
 export const LOAD_MANGAS = 'LOAD_MANGAS';
+export const MANGA_MARKED_AS_FAVORITE = 'MANGA_MARKED_AS_FAVORITE';
+export const MARK_MANGA_AS_FAVORITE = 'MARK_MANGA_AS_FAVORITE';
 
 export const CHAPTERS_LOADED = 'CHAPTERS_LOADED';
 export const LOAD_CHAPTERS = 'LOAD_CHAPTERS';
+export const CHAPTERS_FILTER = 'CHAPTERS_FILTER';
+export const CHAPTER_MARKED_AS_READ = 'CHAPTER_MARKED_AS_READ';
+export const MARK_CHAPTER_AS_READ = 'MARK_CHAPTER_AS_READ';
 
 export const PAGES_LOADED = 'PAGES_LOADED';
 export const LOAD_PAGES = 'LOAD_PAGES';
-
-export const CHAPTERS_FILTER = 'CHAPTERS_FILTER';
-
-export const CHAPTER_MARKED_AS_READ = 'CHAPTER_MARKED_AS_READ';
-export const MARK_CHAPTER_AS_READ = 'MARK_CHAPTER_AS_READ';
 
 export function mangasLoaded(data) {
   return {
@@ -32,10 +32,50 @@ export function loadMangas(userMail, userPassword) {
           .collection('mangas').get()
       })
       .then((data) => {
-        return data._docs.map((item) => (item.id))
+        const isMangaFavorite = async (manga) => {
+          let isMangaFavorite = 'off';
+          try {
+            isMangaFavorite = await AsyncStorage.getItem(manga) || 'off';
+          } catch (error) {
+            console.log(error.message);
+          }
+          return (isMangaFavorite === 'on');
+        };
+        var promisesManga = [];
+        data._docs.map((item, index) => {
+          promisesManga.push(
+            isMangaFavorite(item.id)
+              .then((isMangaFavorite) => { return { id: item.id, number: index, isMangaFavorite: isMangaFavorite }})
+          );
+        });
+        return Promise.all(promisesManga);
       })
       .then((data) => dispatch(mangasLoaded({ mangas: data })))
       .catch((error) => dispatch(mangasLoaded({ error: error })));
+  };
+}
+
+const markAsFavorite = async (manga, value) => {
+  try {
+    await AsyncStorage.setItem(manga, value);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export function mangaMarkedAsFavorite(data) {
+  return {
+    type: MANGA_MARKED_AS_FAVORITE,
+    manga: data.manga,
+    isFavorite: data.isFavorite
+  };
+}
+
+export function markMangaAsFavorite(manga, value) {
+  return (dispatch) => {
+    dispatch({ type: MARK_MANGA_AS_FAVORITE });
+    return markAsFavorite(manga, (value) ? 'on' : 'off')
+      .then(() => dispatch(mangaMarkedAsFavorite({ manga: manga, isFavorite: value })));
   };
 }
 
@@ -94,6 +134,36 @@ export function loadChapters(userMail, userPassword, manga) {
   };
 }
 
+export function filterChapterList() {
+  return {
+    type: CHAPTERS_FILTER,
+  }
+}
+
+const markAsRead = async (chapter, value) => {
+  try {
+    await AsyncStorage.setItem(chapter, value);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export function chapterMarkedAsRead(data) {
+  return {
+    type: CHAPTER_MARKED_AS_READ,
+    chapter: data.chapter,
+    isRead: data.isRead
+  };
+}
+
+export function markChapterAsRead(chapter, value) {
+  return (dispatch) => {
+    dispatch({ type: MARK_CHAPTER_AS_READ });
+    return markAsRead(chapter, (value) ? '1' : '0')
+      .then(() => dispatch(chapterMarkedAsRead({ chapter: chapter, isRead: value })));
+  };
+}
+
 export function pagesLoaded(data) {
   return {
     type: PAGES_LOADED,
@@ -121,36 +191,5 @@ export function loadPages(userMail, userPassword, manga, chapter) {
       })
       .then((data) => dispatch(pagesLoaded({ pages: data })))
       .catch((error) => dispatch(pagesLoaded({ error: error })));
-  };
-}
-
-export function filterChapterList() {
-  return {
-    type: CHAPTERS_FILTER,
-  }
-}
-
-const markAsRead = async (chapter, value) => {
-  try {
-    await AsyncStorage.setItem(chapter, value);
-  } catch (error) {
-    console.log(error.message);
-  }
-  return chapter;
-};
-
-export function chapterMarkedAsRead(data) {
-  return {
-    type: CHAPTER_MARKED_AS_READ,
-    chapter: data.chapter,
-    isRead: data.isRead
-  };
-}
-
-export function markChapterAsRead(chapter, value) {
-  return (dispatch) => {
-    dispatch({ type: MARK_CHAPTER_AS_READ });
-    return markAsRead(chapter, (value) ? '1' : '0')
-      .then(() => dispatch(chapterMarkedAsRead({ chapter: chapter, isRead: value })));
   };
 }

@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { MangaListItem } from '../component/MangaListItem';
+import MangaListItem from '../component/MangaListItem';
 import LogoutButton from '../component/LogoutButton';
 import { SearchBar } from '../component/SearchBar';
 import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
@@ -73,16 +73,6 @@ class HomeScreen extends Component {
     this.setState({ search: '' });
   }
 
-  onPressItem = (item) => {
-    if (this.props.connectivity) {
-      this.props.navigation.navigate('Chapters', {
-        manga: item,
-      });
-    } else {
-      Alert.alert('Warning', 'No internet connection.');
-    }
-  };
-
   onDisconnectPress() {
     this.props.logoutUser();
     this.props.navigation.goBack();
@@ -118,14 +108,13 @@ class HomeScreen extends Component {
         />
         <View style={{ height: 1, width: deviceSize.deviceWidth, backgroundColor: tertiaryColor }}/>
         <FlatList
-          data={this.props.mangas.filter((item) => item.includes(this.state.search))}
-          keyExtractor={item => item}
+          data={this.props.mangas.filter((item) => item.id.includes(this.state.search))}
+          extraData={this.props.mangasListNeedRefresh}
+          keyExtractor={item => item.id}
           ItemSeparatorComponent={this.renderSeparator}
           renderItem={({ item }) => {
             return (
-              <TouchableOpacity onPress={() => this.onPressItem(item)}>
-                <MangaListItem manga={item}/>
-              </TouchableOpacity>
+              <MangaListItem manga={item} navigation={this.props.navigation}/>
             )
           }}
         />
@@ -153,11 +142,12 @@ HomeScreen.propTypes = {
   userPassword: PropTypes.string.isRequired,
 
   mangas: PropTypes.arrayOf(
-    PropTypes.string.isRequired
+    PropTypes.object.isRequired
   ),
   mangasError: PropTypes.string,
   mangasLoading: PropTypes.bool.isRequired,
   loadMangas: PropTypes.func.isRequired,
+  mangasListNeedRefresh: PropTypes.bool.isRequired,
 
   logoutUser: PropTypes.func.isRequired,
 };
@@ -169,6 +159,7 @@ const mapStateToProps = state => ({
   mangas: state.manga.mangas,
   mangasError: state.manga.mangasError,
   mangasLoading: state.manga.mangasLoading,
+  mangasListNeedRefresh: state.manga.mangasListNeedRefresh
 });
 const mapDispatchToProps = dispatch => ({
   loadMangas: (userMail, userPassword) => dispatch(loadMangas(userMail, userPassword)),

@@ -52,10 +52,9 @@ const styles = StyleSheet.create({
   searchTextInput: {
     height: deviceSize.deviceWidth * 0.12,
     width: deviceSize.deviceWidth * 0.80,
-
     paddingStart: 10,
     fontSize: 20,
-    color: secondaryColor,
+    color: tertiaryColor,
   },
   image: {
     height: deviceSize.deviceWidth * 0.07,

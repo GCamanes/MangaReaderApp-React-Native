@@ -4,25 +4,26 @@ import {
     LOAD_PAGES, PAGES_LOADED,
     CHAPTERS_FILTER,
     MARK_CHAPTER_AS_READ, CHAPTER_MARKED_AS_READ,
+    MARK_MANGA_AS_FAVORITE, MANGA_MARKED_AS_FAVORITE
 } from './manga.action';
 
 export const initialState = {
     mangas: [],
     mangasError: undefined,
     mangasLoading: false,
+    mangasListNeedRefresh: false,
+    mangaMarkingAsFavorite: false,
 
     chapters: [],
     chaptersError: undefined,
     chaptersLoading: false,
+    chaptersListFilter: 'down',
+    chaptersListNeedRefresh: false,
+    chapterMarkingAsRead: false,
 
     pages: [],
     pagesError: undefined,
     pagesLoading: false,
-
-    chaptersListFilter: 'down',
-    chaptersListNeedRefresh: false,
-
-    chapterMarkingAsRead: false
 };
 
 export function mangaReducer(state = initialState, action) {
@@ -41,6 +42,23 @@ export function mangaReducer(state = initialState, action) {
                 mangasLoading: true,
             };
         }
+        case MANGA_MARKED_AS_FAVORITE: {
+            const manga = state.mangas.find((item) => item.id === action.manga);
+            manga.isMangaFavorite = action.isFavorite;
+            const others = state.mangas.filter((item) => item.id !== action.manga);
+            return {
+                ...state,
+                mangas: [...others, manga].sort((a, b) => a.number - b.number),
+                mangaMarkingAsFavorite: false,
+                mangasListNeedRefresh: !state.mangasListNeedRefresh
+            };
+        }
+        case MARK_MANGA_AS_FAVORITE: {
+            return {
+                ...state,
+                mangaMarkingAsFavorite: true,
+            };
+        }
         case CHAPTERS_LOADED: {
             return {
                 ...state,
@@ -53,20 +71,6 @@ export function mangaReducer(state = initialState, action) {
             return {
                 ...state,
                 chaptersLoading: true,
-            };
-        }
-        case PAGES_LOADED: {
-            return {
-                ...state,
-                pages: (action.pages) ? action.pages : [],
-                pagesError: action.error,
-                pagesLoading: false,
-            };
-        }
-        case LOAD_PAGES: {
-            return {
-                ...state,
-                pagesLoading: true,
             };
         }
         case CHAPTERS_FILTER: {
@@ -92,13 +96,26 @@ export function mangaReducer(state = initialState, action) {
                   [...others, chapter].sort((a, b) => a.number - b.number),
                 chapterMarkingAsRead: false,
                 chaptersListNeedRefresh: !state.chaptersListNeedRefresh
-
             };
         }
         case MARK_CHAPTER_AS_READ: {
             return {
                 ...state,
                 chapterMarkingAsRead: true,
+            };
+        }
+        case PAGES_LOADED: {
+            return {
+                ...state,
+                pages: (action.pages) ? action.pages : [],
+                pagesError: action.error,
+                pagesLoading: false,
+            };
+        }
+        case LOAD_PAGES: {
+            return {
+                ...state,
+                pagesLoading: true,
             };
         }
         default:
