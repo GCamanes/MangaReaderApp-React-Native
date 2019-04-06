@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
-  View, StyleSheet,
-  TouchableOpacity, FlatList,
+  View, StyleSheet, Text,
+  FlatList, SectionList,
   ActivityIndicator, Alert,
   BackHandler,
 } from 'react-native';
@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import MangaListItem from '../component/MangaListItem';
 import LogoutButton from '../component/LogoutButton';
 import { SearchBar } from '../component/SearchBar';
+import { MangaListSectionTitleView } from '../component/MangaListSectionTitleView';
 import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 import { logoutUser } from '../store/connect.action';
 import { loadMangas } from '../store/manga.action';
@@ -107,11 +108,16 @@ class HomeScreen extends Component {
           value={this.state.search}
         />
         <View style={{ height: 1, width: deviceSize.deviceWidth, backgroundColor: tertiaryColor }}/>
-        <FlatList
-          data={this.props.mangas.filter((item) => item.id.includes(this.state.search))}
+        <SectionList
           extraData={this.props.mangasListNeedRefresh}
+          renderSectionHeader={({section: {title}}) => (
+            <MangaListSectionTitleView title={title}/>
+          )}
+          sections={[
+            {title: 'Favorites', data: this.props.mangas.filter((item) => (item.id.includes(this.state.search) && (item.isMangaFavorite)))},
+            {title: 'Others', data: this.props.mangas.filter((item) => (item.id.includes(this.state.search) && (!item.isMangaFavorite)))},
+          ]}
           keyExtractor={item => item.id}
-          ItemSeparatorComponent={this.renderSeparator}
           renderItem={({ item }) => {
             return (
               <MangaListItem manga={item} navigation={this.props.navigation}/>
