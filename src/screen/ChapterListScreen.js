@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ChapterListItem from '../component/ChapterListItem';
 import { loadChapters } from '../store/manga.action';
-import { primaryColor, secondaryColor } from '../colors';
+import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 import FilterButton from '../component/FilterButton';
 import { deviceSize} from '../size';
 
@@ -16,6 +16,11 @@ export class ChapterListScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam('manga', 'none'),
+      headerTitleStyle: {
+        color: tertiaryColor,
+        fontSize: 22,
+        fontWeight: 'bold',
+      },
       headerRight: <FilterButton/>,
       headerStyle: { backgroundColor: secondaryColor },
     };
@@ -60,6 +65,15 @@ export class ChapterListScreen extends React.Component {
     return true;
   }
 
+  isChapterAtTop(index, numColumns) {
+    return (index < numColumns);
+  }
+
+  isChapterAtBottom(index, numColumns, dataLength) {
+    const diffColumns = dataLength % numColumns;
+    return (index >= (dataLength - ((diffColumns !== 0)?diffColumns:numColumns)));
+  }
+
   render() {
     if (this.props.chaptersLoading) {
       return (
@@ -94,7 +108,8 @@ export class ChapterListScreen extends React.Component {
             return (
               <ChapterListItem 
                 manga={this.state.manga} chapter={item}
-                index={index} numColumns={3}
+                isTop={this.isChapterAtTop(index, 3)}
+                isBottom={this.isChapterAtBottom(index, 3, this.props.chapters.length)}
                 navigation={this.props.navigation}
               />
             )

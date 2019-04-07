@@ -24,6 +24,11 @@ export class ReadingChapterScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Chapter ' + navigation.getParam('chapter', 'none').number,
+      headerTitleStyle: {
+        color: tertiaryColor,
+        fontSize: 22,
+        fontWeight: 'bold',
+      },
       headerStyle: { backgroundColor: secondaryColor },
     };
   };

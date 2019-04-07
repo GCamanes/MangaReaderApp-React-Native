@@ -20,6 +20,11 @@ class HomeScreen extends Component {
 
   static navigationOptions = ({ navigation }) => ({
     headerTitle: 'Manga list',
+    headerTitleStyle: {
+      color: tertiaryColor,
+      fontSize: 22,
+      fontWeight: 'bold',
+    },
     headerLeft: <LogoutButton navigation={navigation}/>,
     headerStyle: { backgroundColor: secondaryColor },
   });
@@ -101,13 +106,12 @@ class HomeScreen extends Component {
     }
     return (
       <View style={{ flex: 1, backgroundColor: primaryColor }}>
-        <View style={{ height: 1, width: deviceSize.deviceWidth, backgroundColor: tertiaryColor }}/>
         <SearchBar
           onSearchChange={this.onSearchChange}
           onCancelSearch={this.onCancelSearch}
           value={this.state.search}
         />
-        <View style={{ height: 1, width: deviceSize.deviceWidth, backgroundColor: tertiaryColor }}/>
+        <View style={{ height: 2, width: deviceSize.deviceWidth, backgroundColor: tertiaryColor }}/>
         <SectionList
           extraData={this.props.mangasListNeedRefresh}
           renderSectionHeader={({section: {title}}) => (

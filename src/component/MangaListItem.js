@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     width: deviceSize.deviceWidth * 0.15,
   },
   mangaText: {
-    fontSize: 21,
+    fontSize: 20,
     fontWeight: 'bold',
     paddingStart: 10,
     color: tertiaryColor,
