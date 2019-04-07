@@ -83,16 +83,18 @@ export class ChapterListScreen extends React.Component {
     return (
       <View style={styles.chapterListView}>
         <FlatList
+          contentContainerStyle={{width: deviceSize.deviceWidth, alignItems: 'center'}}
           data={this.props.chapters}
           extraData={this.props.chaptersListNeedRefresh}
           keyExtractor={item => item.id}
-          numColumns={4}
+          numColumns={3}
           initialNumToRender={30}
           onEndReachedThreshold={30}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
             return (
               <ChapterListItem 
                 manga={this.state.manga} chapter={item}
+                index={index} numColumns={3}
                 navigation={this.props.navigation}
               />
             )
@@ -112,6 +114,7 @@ const styles = StyleSheet.create({
   },
   chapterListView: {
     flex: 1,
+    alignItems: 'center',
     backgroundColor: primaryColor,
   },
   chapterFilterView: {

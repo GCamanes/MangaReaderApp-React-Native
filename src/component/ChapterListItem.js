@@ -37,7 +37,8 @@ export class ChapterListItem extends React.Component {
       <TouchableOpacity onPress={this.onPressItem} onLongPress={this.onLongPressItem} delayLongPress={500}>
         <View style={{
           ...styles.chapterItemView,
-          backgroundColor: (this.props.chapter.isChapterRead) ? secondaryColor : primaryColor
+          backgroundColor: (this.props.chapter.isChapterRead) ? secondaryColor : primaryColor,
+          marginTop: (this.props.index < this.props.numColumns) ? 10 : 0,
         }}>
           <Text
             style={{
@@ -58,12 +59,12 @@ const styles = StyleSheet.create({
     backgroundColor: secondaryColor,
     alignItems: 'center',
     justifyContent: 'center',
-    width: deviceSize.deviceWidth * 0.24,
+    width: deviceSize.deviceWidth * 0.31,
     height: deviceSize.deviceWidth * 0.15,
-    borderRadius: 8,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: tertiaryColor,
-    margin: 1
+    padding: 2,
+    margin:2,
   },
   chapterItemText: {
     fontSize: 18,
