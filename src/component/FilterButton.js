@@ -9,8 +9,8 @@ import { filterListDownImg, filterListUpImg } from '../images';
 
 const styles = StyleSheet.create({
   image: {
-    height: 30,
-    width: 30,
+    height: 35,
+    width: 35,
     marginEnd: 10
   },
 });

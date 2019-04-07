@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { primaryColor, secondaryColor, tertiaryColor, isChapterReadColor } from '../colors';
+import { primaryColor, secondaryColor, tertiaryColor, quaternaryColor } from '../colors';
 import { markChapterAsRead } from "../store/manga.action";
 import { deviceSize} from '../size';
 
@@ -37,7 +37,7 @@ export class ChapterListItem extends React.Component {
       <TouchableOpacity onPress={this.onPressItem} onLongPress={this.onLongPressItem} delayLongPress={500}>
         <View style={{
           ...styles.chapterItemView,
-          backgroundColor: (this.props.chapter.isChapterRead) ? isChapterReadColor : primaryColor,
+          backgroundColor: (this.props.chapter.isChapterRead) ? quaternaryColor : primaryColor,
           marginTop: (this.props.isTop) ? 10 : 2,
           marginBottom: (this.props.isBottom) ? 10 : 2,
         }}>

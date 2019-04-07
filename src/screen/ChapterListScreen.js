@@ -9,6 +9,7 @@ import ChapterListItem from '../component/ChapterListItem';
 import { loadChapters } from '../store/manga.action';
 import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 import FilterButton from '../component/FilterButton';
+import { NavBackButton } from '../component/NavBackButton';
 import { deviceSize} from '../size';
 
 export class ChapterListScreen extends React.Component {
@@ -21,6 +22,7 @@ export class ChapterListScreen extends React.Component {
         fontSize: 22,
         fontWeight: 'bold',
       },
+      headerLeft: <NavBackButton navigation={navigation}/>,
       headerRight: <FilterButton/>,
       headerStyle: { backgroundColor: secondaryColor },
     };

@@ -8,3 +8,4 @@ export const searchImg = require('./search-icon.png');
 export const deleteImg = require('./delete-icon.png');
 export const favoriteOnImg = require('./favorite-on-icon.png');
 export const favoriteOffImg = require('./favorite-off-icon.png');
+export const goBackImg = require('./goback-icon.png');

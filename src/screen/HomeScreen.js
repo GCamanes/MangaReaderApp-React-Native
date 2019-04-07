@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
-  View, StyleSheet, Text,
-  FlatList, SectionList,
+  View, StyleSheet,
+  SectionList,
   ActivityIndicator, Alert,
   BackHandler,
 } from 'react-native';

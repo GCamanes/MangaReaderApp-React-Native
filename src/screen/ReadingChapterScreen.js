@@ -12,6 +12,7 @@ import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
 import PageView from '../component/PageView';
 import { leftArrowImg, rightArrowImg, asReadImg } from '../images';
 import { deviceSize } from '../size';
+import { NavBackButton } from '../component/NavBackButton';
 
 let headerHeight = Header.HEIGHT;
 
@@ -30,6 +31,7 @@ export class ReadingChapterScreen extends React.Component {
         fontWeight: 'bold',
       },
       headerStyle: { backgroundColor: secondaryColor },
+      headerLeft: <NavBackButton navigation={navigation}/>,
     };
   };
 
@@ -210,8 +212,9 @@ const styles = StyleSheet.create({
     height: bottomNavViewHeight * 0.8,
   },
   bottomNavTouchableText: {
-    color: primaryColor,
+    color: secondaryColor,
     fontSize: 18,
+    fontWeight: 'bold',
   },
   markChapterAsReadImg: {
     width: bottomNavViewHeight * 0.95,
