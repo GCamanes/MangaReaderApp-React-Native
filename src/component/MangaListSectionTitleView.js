@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   sectionTitleText: {
     width: deviceSize.deviceWidth * 0.40,
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 21,
     fontWeight: 'bold',
     marginStart: 5,
     marginEnd: 5,
