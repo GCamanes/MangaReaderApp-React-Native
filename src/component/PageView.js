@@ -6,6 +6,15 @@ import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/R
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { deviceSize} from '../size';
+import { colors } from '../colors';
+
+const styles = StyleSheet.create({
+  zoomableView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export class PageView extends React.Component {
   constructor(props) {
@@ -19,14 +28,14 @@ export class PageView extends React.Component {
   render() {
     if (this.props.imgRatioLoading) {
       return (
-        <View style={styles.pageItemView}>
-          <ActivityIndicator size="large" color="green"/>
+        <View style={styles.zoomableView}>
+          <ActivityIndicator size="large" color={colors.tertiary}/>
         </View>
       );
     }
     if (this.props.imgError) {
       return (
-        <View style={styles.pageItemView}>
+        <View style={styles.zoomableView}>
           <Text>error when loading img from {this.props.imgUrl}</Text>
         </View>
       );
@@ -40,7 +49,7 @@ export class PageView extends React.Component {
         initialZoom={1}
         bindToBorders={true}
         onZoomAfter={this.logOutZoomState}
-        style={styles.pageItemView}
+        style={styles.zoomableView}
       >
         <Image
           style={{
@@ -57,14 +66,6 @@ export class PageView extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  pageItemView: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 PageView.propTypes = {
   connectivity: PropTypes.string.isRequired,

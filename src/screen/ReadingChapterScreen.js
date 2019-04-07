@@ -8,29 +8,72 @@ import { connect } from 'react-redux';
 import { Header } from 'react-navigation';
 import { loadPages, markChapterAsRead } from '../store/manga.action'
 import { loadImageRatio } from '../store/image.action';
-import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
+import { colors } from '../colors';
 import PageView from '../component/PageView';
-import { leftArrowImg, rightArrowImg, asReadImg } from '../images';
+import { images } from '../images';
 import { deviceSize } from '../size';
 import { NavBackButton } from '../component/NavBackButton';
 
 let headerHeight = Header.HEIGHT;
-
 let availableHeight = deviceSize.deviceHeight - headerHeight;
 let pageViewHeight = availableHeight * 0.9;
 let bottomNavViewHeight = availableHeight * 0.1;
 
-export class ReadingChapterScreen extends React.Component {
+const styles = StyleSheet.create({
+  loadingView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+  },
+  readingChapterView: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    flexDirection: 'column',
+  },
+  bottomNavView: {
+    height: bottomNavViewHeight,
+    width: deviceSize.deviceWidth,
+    backgroundColor: colors.tertiary,
+    flexDirection: 'row',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  bottomNavPartView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  bottomNavTouchableView: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center', justifyContent: 'center'
+  },
+  bottomNavTouchableImg: {
+    width: bottomNavViewHeight * 0.8,
+    height: bottomNavViewHeight * 0.8,
+  },
+  bottomNavTouchableText: {
+    color: colors.secondary,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  markChapterAsReadImg: {
+    width: bottomNavViewHeight * 0.95,
+    height: bottomNavViewHeight * 0.95,
+  }
+});
 
+export class ReadingChapterScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Chapter ' + navigation.getParam('chapter', 'none').number,
       headerTitleStyle: {
-        color: tertiaryColor,
+        color: colors.tertiary,
         fontSize: 22,
         fontWeight: 'bold',
       },
-      headerStyle: { backgroundColor: secondaryColor },
+      headerStyle: { backgroundColor: colors.secondary },
       headerLeft: <NavBackButton navigation={navigation}/>,
     };
   };
@@ -112,7 +155,7 @@ export class ReadingChapterScreen extends React.Component {
     if (this.props.pagesLoading) {
       return (
         <View style={styles.loadingView}>
-          <ActivityIndicator size="large" color={secondaryColor}/>
+          <ActivityIndicator size="large" color={colors.secondary}/>
         </View>
       );
     } else {
@@ -131,7 +174,7 @@ export class ReadingChapterScreen extends React.Component {
                   onPress={() => this.onPressPreviousPage()}>
                   <Image
                     style={styles.bottomNavTouchableImg}
-                    source={leftArrowImg}
+                    source={images.leftArrow}
                     resizeMode="cover"
                   />
                   <Text style={styles.bottomNavTouchableText}>Prev</Text>
@@ -154,7 +197,7 @@ export class ReadingChapterScreen extends React.Component {
                     <Text style={styles.bottomNavTouchableText}>Next</Text>
                     <Image
                       style={styles.bottomNavTouchableImg}
-                      source={rightArrowImg}
+                      source={images.rightArrow}
                       resizeMode="cover"
                     />
                   </TouchableOpacity>
@@ -164,7 +207,7 @@ export class ReadingChapterScreen extends React.Component {
                     onPress={() => this.onPressMarkAsRead()}>
                     <Image
                       style={styles.markChapterAsReadImg}
-                      source={asReadImg}
+                      source={images.asRead}
                       resizeMode="cover"
                     />
                   </TouchableOpacity>
@@ -176,51 +219,6 @@ export class ReadingChapterScreen extends React.Component {
     }
   }
 }
-
-const styles = StyleSheet.create({
-  loadingView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: primaryColor
-  },
-  readingChapterView: {
-    flex: 1,
-    backgroundColor: primaryColor,
-    flexDirection: 'column'
-  },
-  bottomNavView: {
-    height: bottomNavViewHeight,
-    width: deviceSize.deviceWidth,
-    backgroundColor: tertiaryColor,
-    flexDirection: 'row',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  bottomNavPartView: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  bottomNavTouchableView: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center', justifyContent: 'center'
-  },
-  bottomNavTouchableImg: {
-    width: bottomNavViewHeight * 0.8,
-    height: bottomNavViewHeight * 0.8,
-  },
-  bottomNavTouchableText: {
-    color: secondaryColor,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  markChapterAsReadImg: {
-    width: bottomNavViewHeight * 0.95,
-    height: bottomNavViewHeight * 0.95,
-  }
-});
 
 ReadingChapterScreen.propTypes = {
   navigation: PropTypes.shape({

@@ -3,7 +3,7 @@ import {
   TouchableOpacity, Image, StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { goBackImg } from '../images';
+import { images } from '../images';
 
 const styles = StyleSheet.create({
   image: {
@@ -25,7 +25,7 @@ export class NavBackButton extends Component {
   render() {
     return (
       <TouchableOpacity onPress={() => this.onButtonPress()}>
-        <Image style={styles.image} source={goBackImg}/>
+        <Image style={styles.image} source={images.goBack}/>
       </TouchableOpacity>
     );
   }

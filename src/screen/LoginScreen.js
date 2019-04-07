@@ -8,8 +8,60 @@ import { AsyncStorage } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser } from '../store/connect.action';
-import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
+import { colors } from '../colors';
 import { deviceSize} from '../size';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+  },
+  welcomeText: {
+    color: colors.secondary,
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
+  input: {
+    width: deviceSize.deviceWidth * 0.9,
+    height: 44,
+    paddingStart: 10,
+    marginBottom: 10,
+    color: colors.tertiary,
+    backgroundColor: colors.primary,
+    borderColor: colors.secondary,
+    borderRadius: 10,
+    borderWidth: 2,
+    fontSize: 20,
+  },
+  rememberUserView: {
+    width: deviceSize.deviceWidth * 0.7,
+    height: 30,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rememberUserText: {
+    fontSize: 14,
+    color: colors.tertiary,
+    marginEnd: 10
+  },
+  touchableLogin: {
+    width: deviceSize.deviceWidth * 0.7,
+    height: 40,
+    borderRadius: 20,
+    marginTop: 15,
+    backgroundColor: colors.secondary,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  loginText: {
+    color: colors.primary,
+    fontSize: 20,
+    fontWeight: 'bold'
+  }
+});
 
 export class LoginScreen extends Component {
   static navigationOptions = {
@@ -104,7 +156,7 @@ export class LoginScreen extends Component {
           value={this.state.userMail}
           onChangeText={(userMail) => this.setState({ userMail })}
           placeholder={'Mail'}
-          selectionColor={secondaryColor}
+          selectionColor={colors.secondary}
           keyboardType='email-address'
           style={styles.input}
           autoCapitalize = 'none'
@@ -113,7 +165,7 @@ export class LoginScreen extends Component {
           value={this.state.userPassword}
           onChangeText={(userPassword) => this.setState({ userPassword })}
           placeholder={'Password'}
-          selectionColor={secondaryColor}
+          selectionColor={colors.secondary}
           secureTextEntry={true}
           style={styles.input}
           autoCapitalize = 'none'
@@ -123,15 +175,15 @@ export class LoginScreen extends Component {
           <Switch
             onValueChange={this.onToggleSwitchRememberMe}
             value={this.state.userRemember}
-            trackColor={{true: secondaryColor}}
-            thumbColor={tertiaryColor}
+            trackColor={{true: colors.secondary}}
+            thumbColor={colors.tertiary}
           />
         </View>
         {
           (this.props.loading) ?
             <ActivityIndicator
               size="large"
-              color={secondaryColor}
+              color={colors.secondary}
               style={{ marginTop: 15, height: 40 }}
             />
             :
@@ -147,58 +199,6 @@ export class LoginScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: primaryColor,
-  },
-  welcomeText: {
-    color: secondaryColor,
-    fontSize: 25,
-    fontWeight: 'bold',
-  },
-  input: {
-    width: deviceSize.deviceWidth * 0.9,
-    height: 44,
-    paddingStart: 10,
-    marginBottom: 10,
-    color: tertiaryColor,
-    backgroundColor: primaryColor,
-    borderColor: secondaryColor,
-    borderRadius: 10,
-    borderWidth: 2,
-    fontSize: 20,
-  },
-  rememberUserView: {
-    width: deviceSize.deviceWidth * 0.7,
-    height: 30,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  rememberUserText: {
-    fontSize: 14,
-    color: tertiaryColor,
-    marginEnd: 10
-  },
-  touchableLogin: {
-    width: deviceSize.deviceWidth * 0.7,
-    height: 40,
-    borderRadius: 20,
-    marginTop: 15,
-    backgroundColor: secondaryColor,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  loginText: {
-    color: primaryColor,
-    fontSize: 20,
-    fontWeight: 'bold'
-  }
-});
 
 LoginScreen.propTypes = {
   navigation: PropTypes.shape({

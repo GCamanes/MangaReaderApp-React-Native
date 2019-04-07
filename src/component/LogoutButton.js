@@ -1,19 +1,11 @@
 import React, { Component } from 'react';
 import {
-  TouchableOpacity, Image, StyleSheet, Alert
+  TouchableOpacity, Image, Alert
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { logoutUser } from '../store/connect.action';
-import { logoutImg } from '../images';
-
-const styles = StyleSheet.create({
-  image: {
-    height: 40,
-    width: 40,
-    marginStart: 10
-  },
-});
+import { images } from '../images';
 
 export class LogoutButton extends Component {
   constructor(props) {
@@ -38,7 +30,14 @@ export class LogoutButton extends Component {
           ],
         );
       }}>
-        <Image style={styles.image} source={logoutImg}/>
+        <Image
+          style={{
+            height: 40,
+            width: 40,
+            marginStart: 10
+          }}
+          source={images.logout}
+        />
       </TouchableOpacity>
     );
   }

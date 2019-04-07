@@ -11,22 +11,30 @@ import MangaListItem from '../component/MangaListItem';
 import LogoutButton from '../component/LogoutButton';
 import { SearchBar } from '../component/SearchBar';
 import { MangaListSectionTitleView } from '../component/MangaListSectionTitleView';
-import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
+import { colors } from '../colors';
 import { logoutUser } from '../store/connect.action';
 import { loadMangas } from '../store/manga.action';
 import { deviceSize} from '../size';
 
-class HomeScreen extends Component {
+const styles = StyleSheet.create({
+  loadingView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+  },
+});
 
+class HomeScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
     headerTitle: 'Manga list',
     headerTitleStyle: {
-      color: tertiaryColor,
+      color: colors.tertiary,
       fontSize: 22,
       fontWeight: 'bold',
     },
     headerLeft: <LogoutButton navigation={navigation}/>,
-    headerStyle: { backgroundColor: secondaryColor },
+    headerStyle: { backgroundColor: colors.secondary },
   });
 
   constructor(props) {
@@ -90,7 +98,7 @@ class HomeScreen extends Component {
         style={{
           height: 1,
           width: deviceSize.deviceWidth,
-          backgroundColor: secondaryColor,
+          backgroundColor: colors.secondary,
         }}
       />
     );
@@ -100,18 +108,18 @@ class HomeScreen extends Component {
     if (this.props.mangasLoading) {
       return (
         <View style={styles.loadingView}>
-          <ActivityIndicator size="large" color={secondaryColor}/>
+          <ActivityIndicator size="large" color={colors.secondary}/>
         </View>
       );
     }
     return (
-      <View style={{ flex: 1, backgroundColor: primaryColor }}>
+      <View style={{ flex: 1, backgroundColor: colors.primary }}>
         <SearchBar
           onSearchChange={this.onSearchChange}
           onCancelSearch={this.onCancelSearch}
           value={this.state.search}
         />
-        <View style={{ height: 2, width: deviceSize.deviceWidth, backgroundColor: tertiaryColor }}/>
+        <View style={{ height: 2, width: deviceSize.deviceWidth, backgroundColor: colors.tertiary }}/>
         <SectionList
           extraData={this.props.mangasListNeedRefresh}
           renderSectionHeader={({section: {title}}) => (
@@ -132,15 +140,6 @@ class HomeScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  loadingView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: primaryColor
-  },
-});
 
 HomeScreen.propTypes = {
   navigation: PropTypes.shape({

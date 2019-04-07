@@ -1,4 +1,6 @@
-export const primaryColor = '#ffffff';
-export const secondaryColor = '#F4A018';
-export const tertiaryColor = '#006FAA';
-export const quaternaryColor = '#22A3D6';
+export const colors = {
+    primary: '#ffffff',
+    secondary: '#F4A018',
+    tertiary: '#006FAA',
+    quaternary: '#22A3D6',
+};

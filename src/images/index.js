@@ -1,11 +1,13 @@
-export const rightArrowImg = require('./right-arrow-icon.png');
-export const leftArrowImg = require('./left-arrow-icon.png');
-export const filterListDownImg = require('./filter-list-down-icon.png');
-export const filterListUpImg = require('./filter-list-up-icon.png');
-export const logoutImg = require('./logout-icon.png');
-export const asReadImg = require('./as-read-icon.png');
-export const searchImg = require('./search-icon.png');
-export const deleteImg = require('./delete-icon.png');
-export const favoriteOnImg = require('./favorite-on-icon.png');
-export const favoriteOffImg = require('./favorite-off-icon.png');
-export const goBackImg = require('./goback-icon.png');
+export const images = {
+    rightArrow: require('./right-arrow-icon.png'),
+    leftArrow: require('./left-arrow-icon.png'),
+    filterListDown: require('./filter-list-down-icon.png'),
+    filterListUp: require('./filter-list-up-icon.png'),
+    logout: require('./logout-icon.png'),
+    asRead: require('./as-read-icon.png'),
+    search: require('./search-icon.png'),
+    delete: require('./delete-icon.png'),
+    favoriteOn: require('./favorite-on-icon.png'),
+    favoriteOff: require('./favorite-off-icon.png'),
+    goBack: require('./goback-icon.png'),
+};

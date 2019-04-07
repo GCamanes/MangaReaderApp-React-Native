@@ -1,19 +1,11 @@
 import React, { Component } from 'react';
 import {
-  TouchableOpacity, Image, StyleSheet,
+  TouchableOpacity, Image,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { filterChapterList } from '../store/manga.action';
-import { filterListDownImg, filterListUpImg } from '../images';
-
-const styles = StyleSheet.create({
-  image: {
-    height: 35,
-    width: 35,
-    marginEnd: 10
-  },
-});
+import { images } from '../images';
 
 export class FilterButton extends Component {
   constructor(props) {
@@ -28,8 +20,12 @@ export class FilterButton extends Component {
     return (
       <TouchableOpacity onPress={() => this.onFilterPress()}>
         <Image
-          style={styles.image}
-          source={(this.props.chaptersListFilter === 'down') ? filterListDownImg : filterListUpImg}
+          style={{
+            height: 35,
+            width: 35,
+            marginEnd: 15
+          }}
+          source={(this.props.chaptersListFilter === 'down') ? images.filterListDown : images.filterListUp}
         />
       </TouchableOpacity>
     );

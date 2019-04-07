@@ -3,9 +3,41 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { markMangaAsFavorite } from '../store/manga.action';
-import { primaryColor, tertiaryColor } from '../colors';
+import { colors } from '../colors';
 import { deviceSize } from '../size';
-import { favoriteOnImg, favoriteOffImg } from '../images';
+import { images } from '../images';
+
+const styles = StyleSheet.create({
+  mangaItemView: {
+    flexDirection: 'row',
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: deviceSize.deviceWidth * 0.15,
+    width: deviceSize.deviceWidth
+  },
+  touchableMangaTextView: {
+    justifyContent: 'center',
+    height: deviceSize.deviceWidth * 0.15,
+    width: deviceSize.deviceWidth * 0.85,
+  },
+  touchableFavoriteImgView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: deviceSize.deviceWidth * 0.15,
+    width: deviceSize.deviceWidth * 0.15,
+  },
+  mangaText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingStart: 10,
+    color: colors.tertiary,
+  },
+  favoriteImg: {
+    height: deviceSize.deviceWidth * 0.1,
+    width: deviceSize.deviceWidth * 0.1,
+  }
+});
 
 export class MangaListItem extends React.Component {
   constructor(props) {
@@ -46,45 +78,13 @@ export class MangaListItem extends React.Component {
         >
           <Image
             style={styles.favoriteImg}
-            source={(this.props.manga.isMangaFavorite) ? favoriteOnImg : favoriteOffImg}
+            source={(this.props.manga.isMangaFavorite) ? images.favoriteOn : images.favoriteOff}
           />
         </TouchableOpacity>
       </View >
     );
   }
 }
-
-const styles = StyleSheet.create({
-  mangaItemView: {
-    flexDirection: 'row',
-    backgroundColor: primaryColor,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: deviceSize.deviceWidth * 0.15,
-    width: deviceSize.deviceWidth
-  },
-  touchableMangaTextView: {
-    justifyContent: 'center',
-    height: deviceSize.deviceWidth * 0.15,
-    width: deviceSize.deviceWidth * 0.85,
-  },
-  touchableFavoriteImgView: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: deviceSize.deviceWidth * 0.15,
-    width: deviceSize.deviceWidth * 0.15,
-  },
-  mangaText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    paddingStart: 10,
-    color: tertiaryColor,
-  },
-  favoriteImg: {
-    height: deviceSize.deviceWidth * 0.1,
-    width: deviceSize.deviceWidth * 0.1,
-  }
-});
 
 MangaListItem.propTypes = {
   navigation: PropTypes.shape({

@@ -7,24 +7,44 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ChapterListItem from '../component/ChapterListItem';
 import { loadChapters } from '../store/manga.action';
-import { primaryColor, secondaryColor, tertiaryColor } from '../colors';
+import { colors } from '../colors';
 import FilterButton from '../component/FilterButton';
 import { NavBackButton } from '../component/NavBackButton';
 import { deviceSize} from '../size';
 
-export class ChapterListScreen extends React.Component {
+const styles = StyleSheet.create({
+  loadingView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+  },
+  chapterListView: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+  },
+  chapterFilterView: {
+    height: deviceSize.deviceWidth * 0.15,
+    width: deviceSize.deviceWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row'
+  },
+});
 
+export class ChapterListScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam('manga', 'none'),
       headerTitleStyle: {
-        color: tertiaryColor,
+        color: colors.tertiary,
         fontSize: 22,
         fontWeight: 'bold',
       },
       headerLeft: <NavBackButton navigation={navigation}/>,
       headerRight: <FilterButton/>,
-      headerStyle: { backgroundColor: secondaryColor },
+      headerStyle: { backgroundColor: colors.secondary },
     };
   };
 
@@ -80,7 +100,7 @@ export class ChapterListScreen extends React.Component {
     if (this.props.chaptersLoading) {
       return (
         <View style={styles.loadingView}>
-          <ActivityIndicator size="large" color={secondaryColor}/>
+          <ActivityIndicator size="large" color={colors.secondary}/>
         </View>
       );
     }
@@ -90,7 +110,7 @@ export class ChapterListScreen extends React.Component {
           <Text style={{
             fontSize: 18,
             fontWeight: 'bold',
-            color: secondaryColor
+            color: colors.secondary
           }}
           >No available chapters in firestore.</Text>
         </View>
@@ -121,37 +141,6 @@ export class ChapterListScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  loadingView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF'
-  },
-  chapterListView: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: primaryColor,
-  },
-  chapterFilterView: {
-    height: deviceSize.deviceWidth * 0.15,
-    width: deviceSize.deviceWidth,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row'
-  },
-  chapterFilterText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black'
-  },
-  chapterFilterImage: {
-    width: deviceSize.deviceWidth * 0.1,
-    height: deviceSize.deviceWidth * 0.1,
-    marginEnd: 10
-  }
-});
 
 ChapterListScreen.propTypes = {
   navigation: PropTypes.shape({
