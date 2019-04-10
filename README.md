@@ -1,5 +1,8 @@
 # MangaReaderApp-React-Native
-Personal project : app to read manga scans from a database created on Cloud Firestore (Firebase)
+Personal project : manga reading app working on Android and iOS.  
+Both app are connected to a [Firebase](https://firebase.google.com) project witch allow
+ them to access a NoSQL database ([Cloud Firestore](https://firebase.google.com/products/firestore/)).  
+Database is in this format : mangas > manga > chapters > chapter > pages > page.url
 
 ## Login screen
 > Login with mail and password and remember me option.
@@ -19,6 +22,7 @@ Personal project : app to read manga scans from a database created on Cloud Fire
 <img src="./screenshots/mangareaderapp-chapterlist.png" width="280" height="500"/>
 
 ## Reading screen
-> Possibility to zoom on page images (see [@dudigital/react-native-zoomable-view](https://github.com/DuDigital/react-native-zoomable-view))
+> Possibility to zoom on page images (see 
+[@dudigital/react-native-zoomable-view](https://github.com/DuDigital/react-native-zoomable-view))
 <img src="./screenshots/mangareaderapp-reading.png" width="280" height="500"/>
 <img src="./screenshots/mangareaderapp-reading-zoom.png" width="280" height="500"/>
