@@ -105,12 +105,7 @@ export class ReadingChapterScreen extends React.Component {
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     if (this.props.connectivity) {
-      this.props.loadPages(
-        this.props.userMail, this.props.userPassword,
-        this.state.manga, this.state.chapter.id
-      )
-        .then(() => this.props.loadImageRatio(this.props.pages[0].url))
-        .catch((error) => (console.log(error)));
+      this.props.loadImageRatio(this.state.chapter.pages[0].url);
     } else {
       Alert.alert('Warning', 'No internet connection.');
     }
@@ -129,11 +124,11 @@ export class ReadingChapterScreen extends React.Component {
   }
 
   onPressNextPage() {
-    if (this.state.currentPageIndex != (this.props.pages.length - 1)) {
+    if (this.state.currentPageIndex != (this.state.chapter.pages.length - 1)) {
       this.setState({
         currentPageIndex: this.state.currentPageIndex + 1
       });
-      this.props.loadImageRatio(this.props.pages[this.state.currentPageIndex + 1].url);
+      this.props.loadImageRatio(this.state.chapter.pages[this.state.currentPageIndex + 1].url);
     }
   }
 
@@ -142,7 +137,7 @@ export class ReadingChapterScreen extends React.Component {
       this.setState({
         currentPageIndex: this.state.currentPageIndex - 1
       });
-      this.props.loadImageRatio(this.props.pages[this.state.currentPageIndex - 1].url);
+      this.props.loadImageRatio(this.state.chapter.pages[this.state.currentPageIndex - 1].url);
     }
   }
 
@@ -152,71 +147,64 @@ export class ReadingChapterScreen extends React.Component {
   }
 
   render() {
-    if (this.props.pagesLoading) {
-      return (
-        <View style={styles.loadingView}>
-          <ActivityIndicator size="large" color={colors.secondary}/>
+
+    return (
+      <View style={styles.readingChapterView}>
+        <View style={{ height: pageViewHeight, width: deviceSize.deviceWidth, }}>
+          <PageView pageViewHeight={pageViewHeight}/>
         </View>
-      );
-    } else {
-      return (
-        <View style={styles.readingChapterView}>
-          <View style={{ height: pageViewHeight, width: deviceSize.deviceWidth, }}>
-            <PageView pageViewHeight={pageViewHeight}/>
+
+        <View style={styles.bottomNavView}>
+          <View style={styles.bottomNavPartView}>
+            {
+              (this.state.currentPageIndex !== 0) &&
+              <TouchableOpacity
+                style={styles.bottomNavTouchableView}
+                onPress={() => this.onPressPreviousPage()}>
+                <Image
+                  style={styles.bottomNavTouchableImg}
+                  source={images.leftArrow}
+                  resizeMode="cover"
+                />
+                <Text style={styles.bottomNavTouchableText}>Prev</Text>
+              </TouchableOpacity>
+            }
           </View>
 
-          <View style={styles.bottomNavView}>
-            <View style={styles.bottomNavPartView}>
-              {
-                (this.state.currentPageIndex !== 0) &&
+          <View style={styles.bottomNavPartView}>
+            <Text style={styles.bottomNavTouchableText}>
+              {this.state.currentPageIndex + 1}/{this.state.chapter.pages.length}
+            </Text>
+          </View>
+
+          <View style={styles.bottomNavPartView}>
+            {
+              (this.state.currentPageIndex !== (this.state.chapter.pages.length - 1)) ?
                 <TouchableOpacity
                   style={styles.bottomNavTouchableView}
-                  onPress={() => this.onPressPreviousPage()}>
+                  onPress={() => this.onPressNextPage()}>
+                  <Text style={styles.bottomNavTouchableText}>Next</Text>
                   <Image
                     style={styles.bottomNavTouchableImg}
-                    source={images.leftArrow}
+                    source={images.rightArrow}
                     resizeMode="cover"
                   />
-                  <Text style={styles.bottomNavTouchableText}>Prev</Text>
                 </TouchableOpacity>
-              }
-            </View>
-
-            <View style={styles.bottomNavPartView}>
-              <Text style={styles.bottomNavTouchableText}>
-                {this.state.currentPageIndex + 1}/{this.props.pages.length}
-              </Text>
-            </View>
-
-            <View style={styles.bottomNavPartView}>
-              {
-                (this.state.currentPageIndex !== (this.props.pages.length - 1)) ?
-                  <TouchableOpacity
-                    style={styles.bottomNavTouchableView}
-                    onPress={() => this.onPressNextPage()}>
-                    <Text style={styles.bottomNavTouchableText}>Next</Text>
-                    <Image
-                      style={styles.bottomNavTouchableImg}
-                      source={images.rightArrow}
-                      resizeMode="cover"
-                    />
-                  </TouchableOpacity>
-                  :
-                  <TouchableOpacity
-                    style={styles.bottomNavTouchableView}
-                    onPress={() => this.onPressMarkAsRead()}>
-                    <Image
-                      style={styles.markChapterAsReadImg}
-                      source={images.asRead}
-                      resizeMode="cover"
-                    />
-                  </TouchableOpacity>
-              }
-            </View>
+                :
+                <TouchableOpacity
+                  style={styles.bottomNavTouchableView}
+                  onPress={() => this.onPressMarkAsRead()}>
+                  <Image
+                    style={styles.markChapterAsReadImg}
+                    source={images.asRead}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+            }
           </View>
         </View>
-      );
-    }
+      </View>
+    );
   }
 }
 
@@ -230,30 +218,14 @@ ReadingChapterScreen.propTypes = {
   userPassword: PropTypes.string.isRequired,
   loadImageRatio: PropTypes.func.isRequired,
 
-  pages: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      page: PropTypes.number.isRequired,
-      url: PropTypes.string.isRequired
-    })
-  ),
-  pagesError: PropTypes.string,
-  pagesLoading: PropTypes.bool.isRequired,
-  loadPages: PropTypes.func.isRequired,
-
   markChapterAsRead: PropTypes.func.isRequired,
 };
 const mapStateToProps = state => ({
   connectivity: state.connect.connectivity,
   userMail: state.connect.userMail,
   userPassword: state.connect.userPassword,
-
-  pages: state.manga.pages,
-  pagesError: state.manga.pagesError,
-  pagesLoading: state.manga.pagesLoading,
 });
 const mapDispatchToProps = dispatch => ({
-  loadPages: (userMail, userPassword, manga, chapter) => dispatch(loadPages(userMail, userPassword, manga, chapter)),
   markChapterAsRead: (chapter, value) => dispatch(markChapterAsRead(chapter, value)),
   loadImageRatio: (url) => dispatch(loadImageRatio(url)),
 });

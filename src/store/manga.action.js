@@ -12,9 +12,6 @@ export const CHAPTERS_FILTER = 'CHAPTERS_FILTER';
 export const CHAPTER_MARKED_AS_READ = 'CHAPTER_MARKED_AS_READ';
 export const MARK_CHAPTER_AS_READ = 'MARK_CHAPTER_AS_READ';
 
-export const PAGES_LOADED = 'PAGES_LOADED';
-export const LOAD_PAGES = 'LOAD_PAGES';
-
 export function mangasLoaded(data) {
   return {
     type: MANGAS_LOADED,
@@ -124,7 +121,7 @@ export function loadChapters(userMail, userPassword, manga) {
         data._docs.map((item) => {
           promisesChapter.push(
             isChapterRead(item.id)
-              .then((isChapterRead) => { return {id: item.id, number: getChapterNumber(item.id), isChapterRead:isChapterRead }})
+              .then((isChapterRead) => { return {id: item.id, pages: item._data.pages, number: getChapterNumber(item.id), isChapterRead:isChapterRead }})
           );
         });
         return Promise.all(promisesChapter);
@@ -161,35 +158,5 @@ export function markChapterAsRead(chapter, value) {
     dispatch({ type: MARK_CHAPTER_AS_READ });
     return markAsRead(chapter, (value) ? '1' : '0')
       .then(() => dispatch(chapterMarkedAsRead({ chapter: chapter, isRead: value })));
-  };
-}
-
-export function pagesLoaded(data) {
-  return {
-    type: PAGES_LOADED,
-    pages: data.pages,
-    error: data.error,
-  };
-}
-
-export function loadPages(userMail, userPassword, manga, chapter) {
-  return (dispatch) => {
-    dispatch({ type: LOAD_PAGES });
-    return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
-      .then(() => {
-        return firebase.firestore()
-          .collection('mangas').doc(manga)
-          .collection('chapters').doc(chapter)
-          .collection('pages').get();
-      })
-      .then((data) => {
-        return data._docs.map((item, index) => {
-          return (
-            { id: item.id, page: index, url: item._data.url }
-          )
-        })
-      })
-      .then((data) => dispatch(pagesLoaded({ pages: data })))
-      .catch((error) => dispatch(pagesLoaded({ error: error })));
   };
 }

@@ -1,7 +1,6 @@
 import {
     LOAD_MANGAS, MANGAS_LOADED,
     LOAD_CHAPTERS, CHAPTERS_LOADED,
-    LOAD_PAGES, PAGES_LOADED,
     CHAPTERS_FILTER,
     MARK_CHAPTER_AS_READ, CHAPTER_MARKED_AS_READ,
     MARK_MANGA_AS_FAVORITE, MANGA_MARKED_AS_FAVORITE
@@ -102,20 +101,6 @@ export function mangaReducer(state = initialState, action) {
             return {
                 ...state,
                 chapterMarkingAsRead: true,
-            };
-        }
-        case PAGES_LOADED: {
-            return {
-                ...state,
-                pages: (action.pages) ? action.pages : [],
-                pagesError: action.error,
-                pagesLoading: false,
-            };
-        }
-        case LOAD_PAGES: {
-            return {
-                ...state,
-                pagesLoading: true,
             };
         }
         default:
