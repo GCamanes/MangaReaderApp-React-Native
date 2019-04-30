@@ -43,39 +43,34 @@ export class ChapterListScreen extends React.Component {
         fontWeight: 'bold',
       },
       headerLeft: <NavBackButton navigation={navigation}/>,
-      headerRight: <FilterButton/>,
+      headerRight: <FilterButton manga={navigation.getParam('manga', 'none')}/>,
       headerStyle: { backgroundColor: colors.secondary },
     };
   };
 
   constructor(props) {
     super(props);
-
+    const { navigation } = this.props;
     this.state = {
-      manga: null,
+      manga: navigation.getParam('manga', 'none'),
     };
 
     this.handleBackButton = this.handleBackButton.bind(this);
   }
 
-  componentWillMount() {
-    const { navigation } = this.props;
-    this.setState({
-      manga: navigation.getParam('manga', 'none')
-    });
-  }
-
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    if (this.props.connectivity) {
-      this.props.loadChapters(this.props.userMail, this.props.userPassword, this.state.manga)
-        .then(() => {
-          if (this.props.mangasError !== undefined) {
-            Alert.alert('Warning', this.props.chaptersError);
-          }
-        });
-    } else {
-      Alert.alert('Warning', 'No internet connection.');
+    if (!this.props.chapters[this.state.manga]) {
+      if (this.props.connectivity) {
+        this.props.loadChapters(this.props.userMail, this.props.userPassword, this.state.manga)
+          .then(() => {
+            if (this.props.mangasError !== undefined) {
+              Alert.alert('Warning', this.props.chaptersError);
+            }
+          });
+      } else {
+        Alert.alert('Warning', 'No internet connection.');
+      }
     }
   }
 
@@ -104,7 +99,7 @@ export class ChapterListScreen extends React.Component {
         </View>
       );
     }
-    if (this.props.chapters.length === 0) {
+    if (this.props.chapters[this.state.manga] && this.props.chapters.length === 0) {
       return (
         <View style={styles.loadingView}>
           <Text style={{
@@ -120,7 +115,7 @@ export class ChapterListScreen extends React.Component {
       <View style={styles.chapterListView}>
         <FlatList
           contentContainerStyle={{width: deviceSize.deviceWidth, alignItems: 'center'}}
-          data={this.props.chapters}
+          data={this.props.chapters[this.state.manga]}
           extraData={this.props.chaptersListNeedRefresh}
           keyExtractor={item => item.id}
           numColumns={3}
@@ -131,7 +126,7 @@ export class ChapterListScreen extends React.Component {
               <ChapterListItem 
                 manga={this.state.manga} chapter={item}
                 isTop={this.isChapterAtTop(index, 3)}
-                isBottom={this.isChapterAtBottom(index, 3, this.props.chapters.length)}
+                isBottom={this.isChapterAtBottom(index, 3, this.props.chapters[this.state.manga].length)}
                 navigation={this.props.navigation}
               />
             )
@@ -151,14 +146,7 @@ ChapterListScreen.propTypes = {
   userMail: PropTypes.string.isRequired,
   userPassword: PropTypes.string.isRequired,
 
-  chapters: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      pages: PropTypes.arrayOf(PropTypes.object).isRequired,
-      number: PropTypes.string.isRequired,
-      isChapterRead: PropTypes.bool.isRequired
-    })
-  ),
+  chapters: PropTypes.object,
   chaptersError: PropTypes.string,
   chaptersLoading: PropTypes.bool.isRequired,
   loadChapters: PropTypes.func.isRequired,

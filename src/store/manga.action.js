@@ -93,6 +93,7 @@ const getChapterNumber = (chapter) => {
 export function chaptersLoaded(data) {
   return {
     type: CHAPTERS_LOADED,
+    manga: data.manga,
     chapters: data.chapters,
     error: data.error,
   };
@@ -126,14 +127,15 @@ export function loadChapters(userMail, userPassword, manga) {
         });
         return Promise.all(promisesChapter);
       })
-      .then((data) => dispatch(chaptersLoaded({ chapters: data.sort((a, b) => b.number - a.number) })))
+      .then((data) => dispatch(chaptersLoaded({ manga: manga, chapters: data.sort((a, b) => b.number - a.number) })))
       .catch((error) => dispatch(chaptersLoaded({ error: error })));
   };
 }
 
-export function filterChapterList() {
+export function filterChapterList(manga) {
   return {
     type: CHAPTERS_FILTER,
+    manga: manga,
   }
 }
 
@@ -148,15 +150,16 @@ const markAsRead = async (chapter, value) => {
 export function chapterMarkedAsRead(data) {
   return {
     type: CHAPTER_MARKED_AS_READ,
+    manga: data.manga,
     chapter: data.chapter,
     isRead: data.isRead
   };
 }
 
-export function markChapterAsRead(chapter, value) {
+export function markChapterAsRead(manga, chapter, value) {
   return (dispatch) => {
     dispatch({ type: MARK_CHAPTER_AS_READ });
     return markAsRead(chapter, (value) ? '1' : '0')
-      .then(() => dispatch(chapterMarkedAsRead({ chapter: chapter, isRead: value })));
+      .then(() => dispatch(chapterMarkedAsRead({ manga: manga, chapter: chapter, isRead: value })));
   };
 }

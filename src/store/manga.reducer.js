@@ -13,16 +13,12 @@ export const initialState = {
     mangasListNeedRefresh: false,
     mangaMarkingAsFavorite: false,
 
-    chapters: [],
+    chapters: {},
     chaptersError: undefined,
     chaptersLoading: false,
     chaptersListFilter: 'down',
     chaptersListNeedRefresh: false,
     chapterMarkingAsRead: false,
-
-    pages: [],
-    pagesError: undefined,
-    pagesLoading: false,
 };
 
 export function mangaReducer(state = initialState, action) {
@@ -61,7 +57,10 @@ export function mangaReducer(state = initialState, action) {
         case CHAPTERS_LOADED: {
             return {
                 ...state,
-                chapters: (action.chapters) ? action.chapters : [],
+                chapters: {
+                    ...state.chapters,
+                    [action.manga]: (action.chapters) ? action.chapters : [],
+                },
                 chaptersError: action.error,
                 chaptersLoading: false,
             };
@@ -75,24 +74,28 @@ export function mangaReducer(state = initialState, action) {
         case CHAPTERS_FILTER: {
             return {
                 ...state,
-                chapters: (state.chaptersListFilter === 'down') ?
-                    state.chapters.sort((a, b) => a.number - b.number)
-                    :
-                    state.chapters.sort((a, b) => b.number - a.number),
+                chapters: {
+                    ...state.chapters,
+                    [action.manga]: (state.chaptersListFilter === 'down')
+                      ? state.chapters[action.manga].sort((a, b) => a.number - b.number)
+                      : state.chapters[action.manga].sort((a, b) => b.number - a.number),
+                },
                 chaptersListFilter: (state.chaptersListFilter === 'down') ? 'up' : 'down',
                 chaptersListNeedRefresh: !state.chaptersListNeedRefresh
             }
         }
         case CHAPTER_MARKED_AS_READ: {
-            const chapter = state.chapters.find((item) => item.id === action.chapter);
+            console.log('*** READ ***', action.manga);
+            const chapter = state.chapters[action.manga].find((item) => item.id === action.chapter);
             chapter.isChapterRead = action.isRead;
-            const others = state.chapters.filter((item) => item.id !== action.chapter);
+            const others = state.chapters[action.manga].filter((item) => item.id !== action.chapter);
             return {
                 ...state,
-                chapters: (state.chaptersListFilter === 'down') ?
-                  [...others, chapter].sort((a, b) => b.number - a.number)
-                  :
-                  [...others, chapter].sort((a, b) => a.number - b.number),
+                chapters: {
+                    [action.manga]: (state.chaptersListFilter === 'down')
+                      ? [...others, chapter].sort((a, b) => b.number - a.number)
+                      : [...others, chapter].sort((a, b) => a.number - b.number),
+                },
                 chapterMarkingAsRead: false,
                 chaptersListNeedRefresh: !state.chaptersListNeedRefresh
             };

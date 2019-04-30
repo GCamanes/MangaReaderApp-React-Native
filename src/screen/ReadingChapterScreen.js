@@ -142,7 +142,7 @@ export class ReadingChapterScreen extends React.Component {
   }
 
   onPressMarkAsRead() {
-    this.props.markChapterAsRead(this.state.chapter.id, true)
+    this.props.markChapterAsRead(this.state.manga, this.state.chapter.id, true)
       .then(() => this.props.navigation.navigate('Chapters'));
   }
 
@@ -226,7 +226,7 @@ const mapStateToProps = state => ({
   userPassword: state.connect.userPassword,
 });
 const mapDispatchToProps = dispatch => ({
-  markChapterAsRead: (chapter, value) => dispatch(markChapterAsRead(chapter, value)),
+  markChapterAsRead: (manga, chapter, value) => dispatch(markChapterAsRead(manga, chapter, value)),
   loadImageRatio: (url) => dispatch(loadImageRatio(url)),
 });
 export default connect(

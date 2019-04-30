@@ -13,7 +13,7 @@ export class FilterButton extends Component {
   }
 
   onFilterPress() {
-    this.props.filterChapterList();
+    this.props.filterChapterList(this.props.manga);
   }
 
   render() {
@@ -34,13 +34,14 @@ export class FilterButton extends Component {
 
 FilterButton.propTypes = {
   chaptersListFilter: PropTypes.string.isRequired,
-  filterChapterList: PropTypes.func.isRequired
+  filterChapterList: PropTypes.func.isRequired,
+  manga: PropTypes.string.isRequired,
 };
 const mapStateToProps = state => ({
   chaptersListFilter: state.manga.chaptersListFilter,
 });
 const mapDispatchToProps = dispatch => ({
-  filterChapterList: () => dispatch(filterChapterList()),
+  filterChapterList: (manga) => dispatch(filterChapterList(manga)),
 });
 export default connect(
   mapStateToProps,
