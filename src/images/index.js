@@ -10,4 +10,6 @@ export const images = {
     favoriteOn: require('./favorite-on-icon.png'),
     favoriteOff: require('./favorite-off-icon.png'),
     goBack: require('./goback-icon.png'),
+    loginBackground : require('./login-background.jpg'),
+    loginBackgroundDBZ : require('./login-background-dbz.jpg'),
 };
