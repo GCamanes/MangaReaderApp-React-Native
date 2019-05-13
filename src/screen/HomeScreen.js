@@ -3,7 +3,7 @@ import {
   View, StyleSheet,
   SectionList,
   ActivityIndicator, Alert,
-  BackHandler,
+  BackHandler, StatusBar,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -29,7 +29,7 @@ class HomeScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
     headerTitle: 'Manga list',
     headerTitleStyle: {
-      color: colors.tertiary,
+      color: colors.primary,
       fontSize: 22,
       fontWeight: 'bold',
     },

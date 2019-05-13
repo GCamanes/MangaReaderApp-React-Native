@@ -23,7 +23,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingBottom: 80,
   },
   inputView: {
     width: deviceSize.deviceWidth * 0.70,
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.tertiary,
     borderRadius: 50,
-    borderColor: 'black',
+    borderColor: colors.secondary,
     borderWidth: 2,
   },
   input: {
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     color: colors.tertiary,
     backgroundColor: colors.primary,
-    borderColor: 'black',
+    borderColor: colors.secondary,
     borderRadius: 10,
     borderWidth: 2,
     fontSize: 16,
@@ -163,7 +164,7 @@ export class LoginScreen extends Component {
 
   render() {
     return (
-      <ImageBackground source={images.loginBackgroundDBZ} style={styles.backgroundImage}>
+      <ImageBackground source={images.loginBackgroundOP} style={styles.backgroundImage}>
         <View style={styles.container}>
           {(Platform.OS !== 'ios') && (
             <StatusBar hidden={true} />
