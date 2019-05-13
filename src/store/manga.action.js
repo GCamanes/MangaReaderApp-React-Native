@@ -12,6 +12,21 @@ export const CHAPTERS_FILTER = 'CHAPTERS_FILTER';
 export const CHAPTER_MARKED_AS_READ = 'CHAPTER_MARKED_AS_READ';
 export const MARK_CHAPTER_AS_READ = 'MARK_CHAPTER_AS_READ';
 
+
+
+const getChapterNumber = (chapter) => {
+  const lengthStr = chapter.length;
+  if (chapter.substring(0, 3) === "000") {
+    return chapter.substring(3, lengthStr);
+  } else if (chapter.substring(0, 2) === "00") {
+    return chapter.substring(2, lengthStr);
+  } else if (chapter[0] === '0') {
+    return chapter.substring(1, lengthStr);
+  } else {
+    return chapter;
+  }
+};
+
 export function mangasLoaded(data) {
   return {
     type: MANGAS_LOADED,
@@ -26,7 +41,7 @@ export function loadMangas(userMail, userPassword) {
     return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
       .then(() => {
         return firebase.firestore()
-          .collection('mangas').get()
+          .collection('mangasList').doc('mangas').get()
       })
       .then((data) => {
         const isMangaFavorite = async (manga) => {
@@ -39,13 +54,18 @@ export function loadMangas(userMail, userPassword) {
           return (isMangaFavorite === 'on');
         };
         var promisesManga = [];
-        data._docs.map((item, index) => {
+        data._data.list.map((item, index) => {
           promisesManga.push(
-            isMangaFavorite(item.id)
-              .then((isMangaFavorite) => { return { id: item.id, number: index, isMangaFavorite: isMangaFavorite }})
+            isMangaFavorite(item.name)
+              .then((isMangaFavorite) => { return {
+                id: item.name, status: item.status, imgUrl: item.imgUrl,
+                authors: item.authors, lastChapter: getChapterNumber(item.lastChapter),
+                number: index, isMangaFavorite: isMangaFavorite
+              }})
           );
         });
         return Promise.all(promisesManga);
+
       })
       .then((data) => dispatch(mangasLoaded({ mangas: data })))
       .catch((error) => dispatch(mangasLoaded({ error: error })));
@@ -75,20 +95,6 @@ export function markMangaAsFavorite(manga, value) {
       .then(() => dispatch(mangaMarkedAsFavorite({ manga: manga, isFavorite: value })));
   };
 }
-
-const getChapterNumber = (chapter) => {
-  const number4digits = chapter.split("chap")[1];
-
-  if (number4digits.substring(0, 3) === "000") {
-    return number4digits[3];
-  } else if (number4digits.substring(0, 2) === "00") {
-    return number4digits.substring(2, 4);
-  } else if (number4digits[0] === '0') {
-    return number4digits.substring(1, 4);
-  } else {
-    return number4digits
-  }
-};
 
 export function chaptersLoaded(data) {
   return {

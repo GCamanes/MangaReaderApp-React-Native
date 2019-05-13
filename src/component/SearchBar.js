@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     height: deviceSize.deviceWidth*0.12,
     borderRadius: 10,
     backgroundColor: colors.primary,
-    borderColor: colors.tertiary,
+    borderColor: colors.quaternary,
     borderWidth: 2,
   },
   searchTextInput: {

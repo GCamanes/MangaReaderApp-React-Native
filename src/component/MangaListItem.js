@@ -7,31 +7,65 @@ import { colors } from '../colors';
 import { deviceSize } from '../size';
 import { images } from '../images';
 
+const mangaItemViewSize = {height: deviceSize.deviceWidth * 0.35};
+const touchableMangaViewSize = {
+  height: deviceSize.deviceWidth * 0.35,
+  width: deviceSize.deviceWidth * 0.875,
+  marginStart: deviceSize.deviceWidth * 0.015,
+};
+const mangaInfosViewSize = {
+  height: deviceSize.deviceWidth * 0.33,
+  width: touchableMangaViewSize.width - touchableMangaViewSize.marginStart - deviceSize.deviceWidth * 0.22,
+  marginStart: touchableMangaViewSize.marginStart,
+}
+
 const styles = StyleSheet.create({
   mangaItemView: {
     flexDirection: 'row',
-    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    height: deviceSize.deviceWidth * 0.15,
-    width: deviceSize.deviceWidth
+    height: mangaItemViewSize.height,
+    width: deviceSize.deviceWidth,
+    marginVertical: 2,
   },
-  touchableMangaTextView: {
-    justifyContent: 'center',
-    height: deviceSize.deviceWidth * 0.15,
-    width: deviceSize.deviceWidth * 0.85,
-  },
-  touchableFavoriteImgView: {
-    justifyContent: 'center',
+  touchableMangaView: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    height: deviceSize.deviceWidth * 0.15,
-    width: deviceSize.deviceWidth * 0.15,
+    height: touchableMangaViewSize.height,
+    width: touchableMangaViewSize.width,
+    marginStart: touchableMangaViewSize.marginStart,
   },
-  mangaText: {
-    fontSize: 20,
+  mangaImg: {
+    height: deviceSize.deviceWidth * 0.33,
+    width: deviceSize.deviceWidth * 0.22,
+  },
+  mangaInfosView: {
+    justifyContent: 'center',
+    height: deviceSize.deviceWidth * 0.33,
+    width: mangaInfosViewSize.width,
+    marginStart: mangaInfosViewSize.marginStart,
+  },
+  mangaTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    paddingStart: 10,
     color: colors.tertiary,
+  },
+  mangaAuthors: {
+    fontSize: 13,
+    color: 'grey',
+  },
+  mangaStatusView: {
+    width: mangaInfosViewSize.width * 0.4,
+    borderRadius: 5,
+    borderColor: colors.tertiary,
+    borderWidth: 1
+  },
+  favoriteView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: deviceSize.deviceWidth * 0.30,
+    width: deviceSize.deviceWidth * 0.11,
   },
   favoriteImg: {
     height: deviceSize.deviceWidth * 0.1,
@@ -66,6 +100,45 @@ export class MangaListItem extends React.Component {
     return (
       <View style={styles.mangaItemView}>
         <TouchableOpacity
+          style={styles.touchableMangaView}
+          /*onPress={this.onPressItem}*/
+        >
+          <Image source={{uri: this.props.manga.imgUrl}} style={styles.mangaImg} />
+          <View style={styles.mangaInfosView}>
+            <Text style={styles.mangaTitle}>
+              {this.props.manga.id}
+            </Text>
+            <Text style={styles.mangaAuthors}>
+              {this.props.manga.authors.join(', ')}
+            </Text>
+            <View>
+              <Text style={{color: colors.secondary, fontWeight: 'bold'}}>
+                Last chapter: {this.props.manga.lastChapter}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={{ color: colors.secondary, fontWeight: 'bold'}}>
+                Status:
+              </Text>
+              <Text style={{ color: (this.props.manga.status === 'Completed') ? 'green' : colors.quaternary, fontWeight: 'bold' }}>
+                {" " + this.props.manga.status}
+              </Text>
+            </View>
+          </View>
+
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.favoriteView}
+          onPress={this.onFavoritePress}
+        >
+          <Image
+            style={styles.favoriteImg}
+            source={(this.props.manga.isMangaFavorite) ? images.favoriteOn : images.favoriteOff}
+          />
+        </TouchableOpacity>
+
+        { /*<TouchableOpacity
           style={styles.touchableMangaTextView}
           onPress={this.onPressItem}
         >
@@ -80,7 +153,7 @@ export class MangaListItem extends React.Component {
             style={styles.favoriteImg}
             source={(this.props.manga.isMangaFavorite) ? images.favoriteOn : images.favoriteOff}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View >
     );
   }

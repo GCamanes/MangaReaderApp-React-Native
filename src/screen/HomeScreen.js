@@ -94,13 +94,18 @@ class HomeScreen extends Component {
 
   renderSeparator = () => {
     return (
-      <View
-        style={{
-          height: 1,
-          width: deviceSize.deviceWidth,
-          backgroundColor: colors.secondary,
-        }}
-      />
+      <View style={{alignItems: 'center'}}>
+        <View
+          style={{
+            height: 1,
+            width: deviceSize.deviceWidth * 0.7,
+            backgroundColor: colors.quaternary,
+            borderRadius: 200,
+            borderWidth: 1,
+            borderColor: colors.quaternary,
+          }}
+        />
+      </View>
     );
   };
 
@@ -122,6 +127,7 @@ class HomeScreen extends Component {
         <View style={{ height: 2, width: deviceSize.deviceWidth, backgroundColor: colors.tertiary }}/>
         <SectionList
           extraData={this.props.mangasListNeedRefresh}
+          //ItemSeparatorComponent={this.renderSeparator}
           renderSectionHeader={({section: {title}}) => (
             <MangaListSectionTitleView title={title}/>
           )}
