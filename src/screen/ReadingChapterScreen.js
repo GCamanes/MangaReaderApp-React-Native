@@ -81,9 +81,11 @@ export class ReadingChapterScreen extends React.Component {
   constructor(props) {
     super(props);
 
+    const { navigation } = this.props;
+
     this.state = {
-      manga: null,
-      chapter: null,
+      manga: navigation.getParam('manga', 'none'),
+      chapter: navigation.getParam('chapter', 'none'),
       currentPageIndex: 0,
     };
 
@@ -94,21 +96,13 @@ export class ReadingChapterScreen extends React.Component {
     this.handleBackButton = this.handleBackButton.bind(this);
   }
 
-  componentWillMount() {
-    const { navigation } = this.props;
-    this.setState({
-      manga: navigation.getParam('manga', 'none'),
-      chapter: navigation.getParam('chapter', 'none'),
-    });
-  }
-
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     if (this.props.connectivity) {
-      this.props.loadImageRatio(this.state.chapter.pages[0].url);
+      this.props.loadPages(this.props.userMail, this.props.userPassword, this.state.manga, this.state.chapter.id);
     } else {
       Alert.alert('Warning', 'No internet connection.');
-    }
+    } 
   }
 
   componentWillUnmount() {
@@ -124,11 +118,11 @@ export class ReadingChapterScreen extends React.Component {
   }
 
   onPressNextPage() {
-    if (this.state.currentPageIndex != (this.state.chapter.pages.length - 1)) {
+    if (this.state.currentPageIndex != (this.props.pages.length - 1)) {
       this.setState({
         currentPageIndex: this.state.currentPageIndex + 1
       });
-      this.props.loadImageRatio(this.state.chapter.pages[this.state.currentPageIndex + 1].url);
+      this.props.loadImageRatio(this.props.pages[this.state.currentPageIndex + 1].url);
     }
   }
 
@@ -137,17 +131,23 @@ export class ReadingChapterScreen extends React.Component {
       this.setState({
         currentPageIndex: this.state.currentPageIndex - 1
       });
-      this.props.loadImageRatio(this.state.chapter.pages[this.state.currentPageIndex - 1].url);
+      this.props.loadImageRatio(this.props.pages[this.state.currentPageIndex - 1].url);
     }
   }
 
   onPressMarkAsRead() {
-    this.props.markChapterAsRead(this.state.manga, this.state.chapter.id, true)
+    this.props.markChapterAsRead(this.state.chapter.id, true)
       .then(() => this.props.navigation.navigate('Chapters'));
   }
 
   render() {
-
+    if (this.props.pagesLoading) {
+      return (
+        <View style={styles.loadingView}>
+          <ActivityIndicator size="large" color={colors.secondary}/>
+        </View>
+      );
+    }
     return (
       <View style={styles.readingChapterView}>
         <View style={{ height: pageViewHeight, width: deviceSize.deviceWidth, }}>
@@ -173,13 +173,13 @@ export class ReadingChapterScreen extends React.Component {
 
           <View style={styles.bottomNavPartView}>
             <Text style={styles.bottomNavTouchableText}>
-              {this.state.currentPageIndex + 1}/{this.state.chapter.pages.length}
+              {this.state.currentPageIndex + 1}/{this.props.pages.length}
             </Text>
           </View>
 
           <View style={styles.bottomNavPartView}>
             {
-              (this.state.currentPageIndex !== (this.state.chapter.pages.length - 1)) ?
+              (this.state.currentPageIndex !== (this.props.pages.length - 1)) ?
                 <TouchableOpacity
                   style={styles.bottomNavTouchableView}
                   onPress={() => this.onPressNextPage()}>
@@ -217,17 +217,24 @@ ReadingChapterScreen.propTypes = {
   userMail: PropTypes.string.isRequired,
   userPassword: PropTypes.string.isRequired,
   loadImageRatio: PropTypes.func.isRequired,
-
+  loadPages: PropTypes.func.isRequired,
+  pages: PropTypes.array.isRequired,
+  pagesError: PropTypes.string,
+  pagesLoading: PropTypes.bool.isRequired,
   markChapterAsRead: PropTypes.func.isRequired,
 };
 const mapStateToProps = state => ({
   connectivity: state.connect.connectivity,
   userMail: state.connect.userMail,
   userPassword: state.connect.userPassword,
+  pages: state.manga.pages,
+  pagesError: state.manga.pagesError,
+  pagesLoading: state.manga.pagesLoading,
 });
 const mapDispatchToProps = dispatch => ({
-  markChapterAsRead: (manga, chapter, value) => dispatch(markChapterAsRead(manga, chapter, value)),
+  markChapterAsRead: (id, value) => dispatch(markChapterAsRead(id, value)),
   loadImageRatio: (url) => dispatch(loadImageRatio(url)),
+  loadPages: (userMail, userPassword, manga, chapterId) => dispatch(loadPages(userMail, userPassword, manga, chapterId)),
 });
 export default connect(
   mapStateToProps,

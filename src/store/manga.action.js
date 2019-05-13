@@ -1,6 +1,8 @@
 import firebase from "react-native-firebase";
 import { AsyncStorage } from "react-native";
 
+import { loadImageRatio } from '../store/image.action';
+
 export const MANGAS_LOADED = 'MANGAS_LOADED';
 export const LOAD_MANGAS = 'LOAD_MANGAS';
 export const MANGA_MARKED_AS_FAVORITE = 'MANGA_MARKED_AS_FAVORITE';
@@ -11,8 +13,8 @@ export const LOAD_CHAPTERS = 'LOAD_CHAPTERS';
 export const CHAPTERS_FILTER = 'CHAPTERS_FILTER';
 export const RESET_FILTER = 'RESET_FILTER';
 
-export const CHAPTER_LOADED = 'CHAPTER_LOADED';
-export const LOAD_CHAPTER = 'LOAD_CHAPTER';
+export const PAGES_LOADED = 'PAGES_LOADED';
+export const LOAD_PAGES = 'LOAD_PAGES';
 
 export const CHAPTER_MARKED_AS_READ = 'CHAPTER_MARKED_AS_READ';
 export const MARK_CHAPTER_AS_READ = 'MARK_CHAPTER_AS_READ';
@@ -151,17 +153,20 @@ export function filterChapterList() {
   }
 }
 
-export function chapterLoaded(data) {
-  return {
-    type: CHAPTER_LOADED,
-    chapter: data.chapter,
-    error: data.error,
-  };
+export function pagesLoaded(data) {
+  return (dispatch) => {
+    dispatch({
+      type: PAGES_LOADED,
+      pages: data.pages,
+      error: data.error,
+    });
+    return dispatch(loadImageRatio(data.pages[0].url));
+  }
 };
 
-export function loadChapter(userMail, userPassword, manga, chapterId) {
+export function loadPages(userMail, userPassword, manga, chapterId) {
   return (dispatch) => {
-    dispatch({ type: LOAD_CHAPTER });
+    dispatch({ type: LOAD_PAGES });
     return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
       .then(() => {
         return firebase.firestore()
@@ -169,30 +174,15 @@ export function loadChapter(userMail, userPassword, manga, chapterId) {
           .collection('chapters').doc(chapterId).get();
       })
       .then((data) => {
-        console.log(data);
-        const isChapterRead = async (chapter) => {
-          let isChapterRead = '0';
-          try {
-            isChapterRead = await AsyncStorage.getItem(chapter) || '0';
-          } catch (error) {
-            console.log(error.message);
-          }
-          return (isChapterRead === '1');
-        };
-        var promisesChapter = [];
-        /*data._data.chaptersList.map((item) => {
-          promisesChapter.push(
-            isChapterRead(item)
-              .then((isChapterRead) => { return {id: item, number: getChapterNumber(item), isChapterRead:isChapterRead }})
-          );
-        });*/
-        return Promise.all(promisesChapter);
+        return data._data.pages
       })
-      .then((data) => dispatch(chapterLoaded({ chapters: data.sort((a, b) => b.number - a.number) })))
-      .catch((error) => dispatch(chapterLoaded({ error: error })));
+      .then((data) => dispatch(pagesLoaded({ pages: data })))
+      .catch((error) => {
+        console.log(error);
+        dispatch(pagesLoaded({ error: error }))
+      });
   };
 }
-
 
 const markAsRead = async (id, value) => {
   try {
