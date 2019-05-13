@@ -35,25 +35,29 @@ const styles = StyleSheet.create({
   },
   loginView: {
     width: deviceSize.deviceWidth * 0.20,
-    height: 130,
+    height: deviceSize.deviceWidth * 0.20,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.tertiary,
+    borderRadius: 50,
+    borderColor: 'black',
+    borderWidth: 2,
   },
   input: {
     width: deviceSize.deviceWidth * 0.70,
     height: 40,
     marginVertical: 5,
-    paddingLeft: 5,
+    paddingHorizontal: 10,
     color: colors.tertiary,
     backgroundColor: colors.primary,
-    borderColor: colors.tertiary,
+    borderColor: 'black',
     borderRadius: 10,
     borderWidth: 2,
     fontSize: 16,
   },
   rememberUserView: {
     width: deviceSize.deviceWidth * 0.7,
-    height: 30,
+    height: 40,
     marginVertical: 5,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -66,16 +70,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   touchableLogin: {
-    flex: 1,
-    borderRadius: 15,
-    backgroundColor: colors.tertiary,
     justifyContent: 'center',
     alignItems: 'center'
   },
   loginText: {
     color: colors.primary,
     fontSize: 20,
-    marginHorizontal: 5,
     fontWeight: 'bold',
   }
 });
@@ -194,7 +194,7 @@ export class LoginScreen extends Component {
                 onValueChange={this.onToggleSwitchRememberMe}
                 value={this.state.userRemember}
                 trackColor={{true: colors.primary}}
-                thumbColor={colors.tertiary}
+                thumbColor={"black"}
               />
             </View>
           </View>
@@ -204,8 +204,8 @@ export class LoginScreen extends Component {
               (this.props.loading) ?
                 <ActivityIndicator
                   size="large"
-                  color={colors.tertiary}
-                  style={{ marginTop: 15, height: 40 }}
+                  color={colors.primary}
+                  style={{ height: 40 }}
                 />
                 :
                 <TouchableOpacity
