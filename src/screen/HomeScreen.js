@@ -3,7 +3,7 @@ import {
   View, StyleSheet,
   SectionList,
   ActivityIndicator, Alert,
-  BackHandler,
+  BackHandler, StatusBar,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -29,7 +29,7 @@ class HomeScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
     headerTitle: 'Manga list',
     headerTitleStyle: {
-      color: colors.tertiary,
+      color: colors.primary,
       fontSize: 22,
       fontWeight: 'bold',
     },
@@ -94,13 +94,18 @@ class HomeScreen extends Component {
 
   renderSeparator = () => {
     return (
-      <View
-        style={{
-          height: 1,
-          width: deviceSize.deviceWidth,
-          backgroundColor: colors.secondary,
-        }}
-      />
+      <View style={{alignItems: 'center'}}>
+        <View
+          style={{
+            height: 1,
+            width: deviceSize.deviceWidth * 0.7,
+            backgroundColor: colors.quaternary,
+            borderRadius: 200,
+            borderWidth: 1,
+            borderColor: colors.quaternary,
+          }}
+        />
+      </View>
     );
   };
 
@@ -122,12 +127,17 @@ class HomeScreen extends Component {
         <View style={{ height: 2, width: deviceSize.deviceWidth, backgroundColor: colors.tertiary }}/>
         <SectionList
           extraData={this.props.mangasListNeedRefresh}
+          //ItemSeparatorComponent={this.renderSeparator}
           renderSectionHeader={({section: {title}}) => (
             <MangaListSectionTitleView title={title}/>
           )}
           sections={[
-            {title: 'Favorites', data: this.props.mangas.filter((item) => (item.id.includes(this.state.search) && (item.isMangaFavorite)))},
-            {title: 'Others', data: this.props.mangas.filter((item) => (item.id.includes(this.state.search) && (!item.isMangaFavorite)))},
+            {title: 'Favorites', data: this.props.mangas.filter((item) => (
+              item.id.toLowerCase().includes(this.state.search) && (item.isMangaFavorite)
+              ))},
+            {title: 'Others', data: this.props.mangas.filter((item) => (
+              item.id.toLowerCase().includes(this.state.search) && (!item.isMangaFavorite)
+              ))},
           ]}
           keyExtractor={item => item.id}
           renderItem={({ item }) => {

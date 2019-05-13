@@ -47,7 +47,7 @@ export class ChapterListItem extends React.Component {
 
   onLongPressItem() {
     const { id, isChapterRead } = this.props.chapter;
-    this.props.markChapterAsRead(this.props.manga, id, !isChapterRead);
+    this.props.markChapterAsRead(id, !isChapterRead);
   }
 
   render() {
@@ -83,7 +83,6 @@ ChapterListItem.propTypes = {
   manga: PropTypes.string.isRequired,
   chapter: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    pages: PropTypes.arrayOf(PropTypes.object).isRequired,
     number: PropTypes.string.isRequired,
     isChapterRead: PropTypes.bool.isRequired
   })
@@ -92,7 +91,7 @@ const mapStateToProps = state => ({
   connectivity: state.connect.connectivity,
 });
 const mapDispatchToProps = dispatch => ({
-  markChapterAsRead: (manga, chapter, value) => dispatch(markChapterAsRead(manga, chapter, value)),
+  markChapterAsRead: (id, value) => dispatch(markChapterAsRead(id, value)),
 });
 export default connect(
   mapStateToProps,

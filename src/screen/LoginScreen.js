@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Alert, TouchableOpacity, TextInput,
+  Alert, TouchableOpacity, TextInput, ImageBackground,
   View, StyleSheet, ActivityIndicator, Text, Switch,
   StatusBar, Platform, BackHandler,
 } from 'react-native';
@@ -10,56 +10,74 @@ import { connect } from 'react-redux';
 import { loginUser } from '../store/connect.action';
 import { colors } from '../colors';
 import { deviceSize} from '../size';
+import { images } from '../images';
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: null,
+    height: null,
+    resizeMode: 'cover'
+  },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.primary,
+    flexDirection: 'row',
+    paddingBottom: 80,
   },
-  welcomeText: {
-    color: colors.secondary,
-    fontSize: 25,
-    fontWeight: 'bold',
+  inputView: {
+    width: deviceSize.deviceWidth * 0.70,
+    height: 130,
+    marginRight: 5,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loginView: {
+    width: deviceSize.deviceWidth * 0.20,
+    height: deviceSize.deviceWidth * 0.20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.tertiary,
+    borderRadius: 50,
+    borderColor: colors.secondary,
+    borderWidth: 2,
   },
   input: {
-    width: deviceSize.deviceWidth * 0.9,
-    height: 44,
-    paddingStart: 10,
-    marginBottom: 10,
+    width: deviceSize.deviceWidth * 0.70,
+    height: 40,
+    marginVertical: 5,
+    paddingHorizontal: 10,
     color: colors.tertiary,
     backgroundColor: colors.primary,
     borderColor: colors.secondary,
     borderRadius: 10,
     borderWidth: 2,
-    fontSize: 20,
+    fontSize: 16,
   },
   rememberUserView: {
     width: deviceSize.deviceWidth * 0.7,
-    height: 30,
+    height: 40,
+    marginVertical: 5,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
   rememberUserText: {
-    fontSize: 14,
-    color: colors.tertiary,
-    marginEnd: 10
+    fontSize: 16,
+    color: colors.primary,
+    marginEnd: 10,
+    fontWeight: 'bold',
   },
   touchableLogin: {
-    width: deviceSize.deviceWidth * 0.7,
-    height: 40,
-    borderRadius: 20,
-    marginTop: 15,
-    backgroundColor: colors.secondary,
     justifyContent: 'center',
     alignItems: 'center'
   },
   loginText: {
     color: colors.primary,
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   }
 });
 
@@ -146,56 +164,62 @@ export class LoginScreen extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        {(Platform.OS !== 'ios') && (
-          <StatusBar hidden={true} />
-        )}
-        <Text style={styles.welcomeText}>Welcome to</Text>
-        <Text style={{ ...styles.welcomeText, marginBottom: 20 }}>Manga Reader App !</Text>
-        <TextInput
-          value={this.state.userMail}
-          onChangeText={(userMail) => this.setState({ userMail })}
-          placeholder={'Mail'}
-          selectionColor={colors.secondary}
-          keyboardType='email-address'
-          style={styles.input}
-          autoCapitalize = 'none'
-        />
-        <TextInput
-          value={this.state.userPassword}
-          onChangeText={(userPassword) => this.setState({ userPassword })}
-          placeholder={'Password'}
-          selectionColor={colors.secondary}
-          secureTextEntry={true}
-          style={styles.input}
-          autoCapitalize = 'none'
-        />
-        <View style={styles.rememberUserView}>
-          <Text style={styles.rememberUserText}>Remember me ?</Text>
-          <Switch
-            onValueChange={this.onToggleSwitchRememberMe}
-            value={this.state.userRemember}
-            trackColor={{true: colors.secondary}}
-            thumbColor={colors.tertiary}
-          />
-        </View>
-        {
-          (this.props.loading) ?
-            <ActivityIndicator
-              size="large"
-              color={colors.secondary}
-              style={{ marginTop: 15, height: 40 }}
-            />
-            :
-            <TouchableOpacity
-              style={styles.touchableLogin}
-              onPress={() => this.onLogin()}
-            >
-              <Text style={styles.loginText}>Login</Text>
-            </TouchableOpacity>
-        }
+      <ImageBackground source={images.loginBackgroundOP} style={styles.backgroundImage}>
+        <View style={styles.container}>
+          {(Platform.OS !== 'ios') && (
+            <StatusBar hidden={true} />
+          )}
 
-      </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.userMail}
+              onChangeText={(userMail) => this.setState({ userMail })}
+              placeholder={'Mail'}
+              selectionColor={colors.secondary}
+              keyboardType='email-address'
+              style={styles.input}
+              autoCapitalize = 'none'
+            />
+            <TextInput
+              value={this.state.userPassword}
+              onChangeText={(userPassword) => this.setState({ userPassword })}
+              placeholder={'Password'}
+              selectionColor={colors.secondary}
+              secureTextEntry={true}
+              style={styles.input}
+              autoCapitalize = 'none'
+            />
+            <View style={styles.rememberUserView}>
+              <Text style={styles.rememberUserText}>Remember me ?</Text>
+              <Switch
+                onValueChange={this.onToggleSwitchRememberMe}
+                value={this.state.userRemember}
+                trackColor={{true: colors.primary}}
+                thumbColor={"black"}
+              />
+            </View>
+          </View>
+
+          <View style={styles.loginView}>
+            {
+              (this.props.loading) ?
+                <ActivityIndicator
+                  size="large"
+                  color={colors.primary}
+                  style={{ height: 40 }}
+                />
+                :
+                <TouchableOpacity
+                  style={styles.touchableLogin}
+                  onPress={() => this.onLogin()}
+                >
+                  <Text style={styles.loginText}>GO !</Text>
+                </TouchableOpacity>
+            }
+          </View>
+
+        </View>
+      </ImageBackground>
     );
   }
 }

@@ -38,7 +38,7 @@ export class ChapterListScreen extends React.Component {
     return {
       title: navigation.getParam('manga', 'none'),
       headerTitleStyle: {
-        color: colors.tertiary,
+        color: colors.primary,
         fontSize: 22,
         fontWeight: 'bold',
       },
@@ -60,17 +60,15 @@ export class ChapterListScreen extends React.Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    if (!this.props.chapters[this.state.manga]) {
-      if (this.props.connectivity) {
-        this.props.loadChapters(this.props.userMail, this.props.userPassword, this.state.manga)
-          .then(() => {
-            if (this.props.mangasError !== undefined) {
-              Alert.alert('Warning', this.props.chaptersError);
-            }
-          });
-      } else {
-        Alert.alert('Warning', 'No internet connection.');
-      }
+    if (this.props.connectivity) {
+      this.props.loadChapters(this.props.userMail, this.props.userPassword, this.state.manga)
+        .then(() => {
+          if (this.props.mangasError !== undefined) {
+            Alert.alert('Warning', this.props.chaptersError);
+          }
+        });
+    } else {
+      Alert.alert('Warning', 'No internet connection.');
     }
   }
 
@@ -99,7 +97,7 @@ export class ChapterListScreen extends React.Component {
         </View>
       );
     }
-    if (this.props.chapters[this.state.manga] && this.props.chapters.length === 0) {
+    if (this.props.chapters && this.props.chapters.length === 0) {
       return (
         <View style={styles.loadingView}>
           <Text style={{
@@ -115,7 +113,7 @@ export class ChapterListScreen extends React.Component {
       <View style={styles.chapterListView}>
         <FlatList
           contentContainerStyle={{width: deviceSize.deviceWidth, alignItems: 'center'}}
-          data={this.props.chapters[this.state.manga]}
+          data={this.props.chapters}
           extraData={this.props.chaptersListNeedRefresh}
           keyExtractor={item => item.id}
           numColumns={3}
@@ -126,7 +124,7 @@ export class ChapterListScreen extends React.Component {
               <ChapterListItem 
                 manga={this.state.manga} chapter={item}
                 isTop={this.isChapterAtTop(index, 3)}
-                isBottom={this.isChapterAtBottom(index, 3, this.props.chapters[this.state.manga].length)}
+                isBottom={this.isChapterAtBottom(index, 3, this.props.chapters.length)}
                 navigation={this.props.navigation}
               />
             )
@@ -146,7 +144,7 @@ ChapterListScreen.propTypes = {
   userMail: PropTypes.string.isRequired,
   userPassword: PropTypes.string.isRequired,
 
-  chapters: PropTypes.object,
+  chapters: PropTypes.array,
   chaptersError: PropTypes.string,
   chaptersLoading: PropTypes.bool.isRequired,
   loadChapters: PropTypes.func.isRequired,
