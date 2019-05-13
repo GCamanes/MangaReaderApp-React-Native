@@ -10,21 +10,27 @@ export const CHAPTERS_LOADED = 'CHAPTERS_LOADED';
 export const LOAD_CHAPTERS = 'LOAD_CHAPTERS';
 export const CHAPTERS_FILTER = 'CHAPTERS_FILTER';
 export const RESET_FILTER = 'RESET_FILTER';
+
+export const CHAPTER_LOADED = 'CHAPTER_LOADED';
+export const LOAD_CHAPTER = 'LOAD_CHAPTER';
+
 export const CHAPTER_MARKED_AS_READ = 'CHAPTER_MARKED_AS_READ';
 export const MARK_CHAPTER_AS_READ = 'MARK_CHAPTER_AS_READ';
 
 
 
 const getChapterNumber = (chapter) => {
-  const lengthStr = chapter.length;
-  if (chapter.substring(0, 3) === "000") {
-    return chapter.substring(3, lengthStr);
-  } else if (chapter.substring(0, 2) === "00") {
-    return chapter.substring(2, lengthStr);
-  } else if (chapter[0] === '0') {
-    return chapter.substring(1, 4);
+  const indexOfUnderscore = chapter.indexOf('_');
+  const number = chapter.substring(indexOfUnderscore+1, chapter.length)
+  const lengthStr = number.length;
+  if (number.substring(0, 3) === "000") {
+    return number.substring(3, lengthStr);
+  } else if (number.substring(0, 2) === "00") {
+    return number.substring(2, lengthStr);
+  } else if (number[0] === '0') {
+    return number.substring(1, 4);
   } else {
-    return chapter
+    return number
   }
 };
 
@@ -100,7 +106,6 @@ export function markMangaAsFavorite(manga, value) {
 export function chaptersLoaded(data) {
   return {
     type: CHAPTERS_LOADED,
-    manga: data.manga,
     chapters: data.chapters,
     error: data.error,
   };
@@ -113,10 +118,10 @@ export function loadChapters(userMail, userPassword, manga) {
     return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
       .then(() => {
         return firebase.firestore()
-          .collection('mangas').doc(manga)
-          .collection('chapters').get();
+          .collection('mangasChapters').doc(manga).get();
       })
       .then((data) => {
+        console.log(data);
         const isChapterRead = async (chapter) => {
           let isChapterRead = '0';
           try {
@@ -127,29 +132,71 @@ export function loadChapters(userMail, userPassword, manga) {
           return (isChapterRead === '1');
         };
         var promisesChapter = [];
-        /*data._docs.map((item) => {
+        data._data.chaptersList.map((item) => {
           promisesChapter.push(
-            isChapterRead(item.id)
-              .then((isChapterRead) => { return {id: item.id, pages: item._data.pages, number: getChapterNumber(item.id), isChapterRead:isChapterRead }})
+            isChapterRead(item)
+              .then((isChapterRead) => { return {id: item, number: getChapterNumber(item), isChapterRead:isChapterRead }})
           );
-        }); */
+        });
         return Promise.all(promisesChapter);
       })
-      .then((data) => dispatch(chaptersLoaded({ manga: manga, chapters: data.sort((a, b) => b.number - a.number) })))
+      .then((data) => dispatch(chaptersLoaded({ chapters: data.sort((a, b) => b.number - a.number) })))
       .catch((error) => dispatch(chaptersLoaded({ error: error })));
   };
 }
 
-export function filterChapterList(manga) {
+export function filterChapterList() {
   return {
     type: CHAPTERS_FILTER,
-    manga: manga,
   }
 }
 
-const markAsRead = async (chapter, value) => {
+export function chapterLoaded(data) {
+  return {
+    type: CHAPTER_LOADED,
+    chapter: data.chapter,
+    error: data.error,
+  };
+};
+
+export function loadChapter(userMail, userPassword, manga, chapterId) {
+  return (dispatch) => {
+    dispatch({ type: LOAD_CHAPTER });
+    return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
+      .then(() => {
+        return firebase.firestore()
+          .collection('mangasChapters').doc(manga)
+          .collection('chapters').doc(chapterId).get();
+      })
+      .then((data) => {
+        console.log(data);
+        const isChapterRead = async (chapter) => {
+          let isChapterRead = '0';
+          try {
+            isChapterRead = await AsyncStorage.getItem(chapter) || '0';
+          } catch (error) {
+            console.log(error.message);
+          }
+          return (isChapterRead === '1');
+        };
+        var promisesChapter = [];
+        /*data._data.chaptersList.map((item) => {
+          promisesChapter.push(
+            isChapterRead(item)
+              .then((isChapterRead) => { return {id: item, number: getChapterNumber(item), isChapterRead:isChapterRead }})
+          );
+        });*/
+        return Promise.all(promisesChapter);
+      })
+      .then((data) => dispatch(chapterLoaded({ chapters: data.sort((a, b) => b.number - a.number) })))
+      .catch((error) => dispatch(chapterLoaded({ error: error })));
+  };
+}
+
+
+const markAsRead = async (id, value) => {
   try {
-    await AsyncStorage.setItem(chapter, value);
+    await AsyncStorage.setItem(id, value);
   } catch (error) {
     console.log(error.message);
   }
@@ -158,16 +205,15 @@ const markAsRead = async (chapter, value) => {
 export function chapterMarkedAsRead(data) {
   return {
     type: CHAPTER_MARKED_AS_READ,
-    manga: data.manga,
-    chapter: data.chapter,
+    id: data.id,
     isRead: data.isRead
   };
 }
 
-export function markChapterAsRead(manga, chapter, value) {
+export function markChapterAsRead(id, value) {
   return (dispatch) => {
     dispatch({ type: MARK_CHAPTER_AS_READ });
-    return markAsRead(chapter, (value) ? '1' : '0')
-      .then(() => dispatch(chapterMarkedAsRead({ manga: manga, chapter: chapter, isRead: value })));
+    return markAsRead(id, (value) ? '1' : '0')
+      .then(() => dispatch(chapterMarkedAsRead({ id: id, isRead: value })));
   };
 }

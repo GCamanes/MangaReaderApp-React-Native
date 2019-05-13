@@ -2,6 +2,7 @@ import {
     LOAD_MANGAS, MANGAS_LOADED,
     LOAD_CHAPTERS, CHAPTERS_LOADED,
     CHAPTERS_FILTER, RESET_FILTER,
+    LOAD_CHAPTER, CHAPTER_LOADED,
     MARK_CHAPTER_AS_READ, CHAPTER_MARKED_AS_READ,
     MARK_MANGA_AS_FAVORITE, MANGA_MARKED_AS_FAVORITE
 } from './manga.action';
@@ -18,6 +19,10 @@ export const initialState = {
     chaptersLoading: false,
     chaptersListFilter: 'down',
     chaptersListNeedRefresh: false,
+
+    chapter: undefined,
+    chapterError: undefined,
+    chapterLoading: false,
     chapterMarkingAsRead: false,
 };
 
@@ -84,10 +89,24 @@ export function mangaReducer(state = initialState, action) {
                 chaptersListFilter: 'down',
             }
         }
+        case CHAPTER_LOADED: {
+            return {
+                ...state,
+                chapter: (action.chapter) ? action.chapter : undefined,
+                chapterError: action.error,
+                chapterLoading: false,
+            };
+        }
+        case LOAD_CHAPTER: {
+            return {
+                ...state,
+                chapterLoading: true,
+            };
+        }
         case CHAPTER_MARKED_AS_READ: {
-            const chapter = state.chapters.find((item) => item.id === action.chapter);
+            const chapter = state.chapters.find((item) => item.id === action.id);
             chapter.isChapterRead = action.isRead;
-            const others = state.chapters.filter((item) => item.id !== action.chapter);
+            const others = state.chapters.filter((item) => item.id !== action.id);
             return {
                 ...state,
                 chapters: (state.chaptersListFilter === 'down')
