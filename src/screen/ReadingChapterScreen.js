@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     height: bottomNavViewHeight * 0.8,
   },
   bottomNavTouchableText: {
-    color: colors.secondary,
+    color: colors.primary,
     fontSize: 20,
     fontWeight: 'bold',
   },
@@ -69,7 +69,7 @@ export class ReadingChapterScreen extends React.Component {
     return {
       title: 'Chapter ' + navigation.getParam('chapter', 'none').number,
       headerTitleStyle: {
-        color: colors.tertiary,
+        color: colors.primary,
         fontSize: 22,
         fontWeight: 'bold',
       },

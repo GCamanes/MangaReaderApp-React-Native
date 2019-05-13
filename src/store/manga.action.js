@@ -9,6 +9,7 @@ export const MARK_MANGA_AS_FAVORITE = 'MARK_MANGA_AS_FAVORITE';
 export const CHAPTERS_LOADED = 'CHAPTERS_LOADED';
 export const LOAD_CHAPTERS = 'LOAD_CHAPTERS';
 export const CHAPTERS_FILTER = 'CHAPTERS_FILTER';
+export const RESET_FILTER = 'RESET_FILTER';
 export const CHAPTER_MARKED_AS_READ = 'CHAPTER_MARKED_AS_READ';
 export const MARK_CHAPTER_AS_READ = 'MARK_CHAPTER_AS_READ';
 
@@ -21,9 +22,9 @@ const getChapterNumber = (chapter) => {
   } else if (chapter.substring(0, 2) === "00") {
     return chapter.substring(2, lengthStr);
   } else if (chapter[0] === '0') {
-    return chapter.substring(1, lengthStr);
+    return chapter.substring(1, 4);
   } else {
-    return chapter;
+    return chapter
   }
 };
 
@@ -59,7 +60,7 @@ export function loadMangas(userMail, userPassword) {
             isMangaFavorite(item.name)
               .then((isMangaFavorite) => { return {
                 id: item.name, status: item.status, imgUrl: item.imgUrl,
-                authors: item.authors, lastChapter: getChapterNumber(item.lastChapter),
+                authors: item.authors, lastChapter: item.lastChapter,
                 number: index, isMangaFavorite: isMangaFavorite
               }})
           );
@@ -108,6 +109,7 @@ export function chaptersLoaded(data) {
 export function loadChapters(userMail, userPassword, manga) {
   return (dispatch) => {
     dispatch({ type: LOAD_CHAPTERS });
+    dispatch({ type: RESET_FILTER });
     return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
       .then(() => {
         return firebase.firestore()
@@ -125,12 +127,12 @@ export function loadChapters(userMail, userPassword, manga) {
           return (isChapterRead === '1');
         };
         var promisesChapter = [];
-        data._docs.map((item) => {
+        /*data._docs.map((item) => {
           promisesChapter.push(
             isChapterRead(item.id)
               .then((isChapterRead) => { return {id: item.id, pages: item._data.pages, number: getChapterNumber(item.id), isChapterRead:isChapterRead }})
           );
-        });
+        }); */
         return Promise.all(promisesChapter);
       })
       .then((data) => dispatch(chaptersLoaded({ manga: manga, chapters: data.sort((a, b) => b.number - a.number) })))

@@ -101,7 +101,7 @@ export class MangaListItem extends React.Component {
       <View style={styles.mangaItemView}>
         <TouchableOpacity
           style={styles.touchableMangaView}
-          /*onPress={this.onPressItem}*/
+          onPress={this.onPressItem}
         >
           <Image source={{uri: this.props.manga.imgUrl}} style={styles.mangaImg} />
           <View style={styles.mangaInfosView}>
