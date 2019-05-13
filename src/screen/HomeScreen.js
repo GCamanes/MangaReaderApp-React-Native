@@ -132,8 +132,12 @@ class HomeScreen extends Component {
             <MangaListSectionTitleView title={title}/>
           )}
           sections={[
-            {title: 'Favorites', data: this.props.mangas.filter((item) => (item.id.includes(this.state.search) && (item.isMangaFavorite)))},
-            {title: 'Others', data: this.props.mangas.filter((item) => (item.id.includes(this.state.search) && (!item.isMangaFavorite)))},
+            {title: 'Favorites', data: this.props.mangas.filter((item) => (
+              item.id.toLowerCase().includes(this.state.search) && (item.isMangaFavorite)
+              ))},
+            {title: 'Others', data: this.props.mangas.filter((item) => (
+              item.id.toLowerCase().includes(this.state.search) && (!item.isMangaFavorite)
+              ))},
           ]}
           keyExtractor={item => item.id}
           renderItem={({ item }) => {

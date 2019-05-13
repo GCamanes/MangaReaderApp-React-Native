@@ -47,7 +47,7 @@ export class SearchBar extends React.Component {
           <Image style={styles.image} source={images.search}/>
           <TextInput
             style={styles.searchTextInput}
-            onChangeText={(text) => this.props.onSearchChange(text)}
+            onChangeText={(text) => this.props.onSearchChange(text.toLowerCase())}
             value={this.props.value}
             placeholder={'search manga by name...'}
             selectionColor={colors.secondary}
