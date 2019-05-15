@@ -23,14 +23,14 @@ export const MARK_CHAPTER_AS_READ = 'MARK_CHAPTER_AS_READ';
 
 const getChapterNumber = (chapter) => {
   const indexOfUnderscore = chapter.indexOf('_');
-  const number = chapter.substring(indexOfUnderscore+1, chapter.length)
+  const number = chapter.substring(indexOfUnderscore+1, chapter.length);
   const lengthStr = number.length;
   if (number.substring(0, 3) === "000") {
     return number.substring(3, lengthStr);
   } else if (number.substring(0, 2) === "00") {
     return number.substring(2, lengthStr);
   } else if (number[0] === '0') {
-    return number.substring(1, 4);
+    return number.substring(1, lengthStr);
   } else {
     return number
   }
@@ -123,7 +123,6 @@ export function loadChapters(userMail, userPassword, manga) {
           .collection('mangasChapters').doc(manga).get();
       })
       .then((data) => {
-        console.log(data);
         const isChapterRead = async (chapter) => {
           let isChapterRead = '0';
           try {
