@@ -12,7 +12,7 @@
     "@dudigital/react-native-zoomable-view": "^1.0.12",
     "prop-types": "^15.7.2",
     "react": "16.6.3",
-    "react-native": "0.58.6",
+    "react-native": "0.70.2",
     "react-native-firebase": "^5.2.3",
     "react-native-gesture-handler": "^1.1.0",
     "react-navigation": "^3.5.1",
